@@ -29,12 +29,13 @@ function [predictions, phi] = fit_blogr (X, w, var_prior, X_test, initial_phi)
     % so it would actually be executing fit_logr_cost.
     phi = fminunc(@(phi) fit_logr_cost(phi, X, w, var_prior), ...
                   initial_phi, options);
+    %PHI VALUE IS [1, 1, 1, ..., 1], IT SHOULD HAVE CHANGED
               
-% a = [1,2,3];
-% repmat(a, 2, 3)
-% ans =
-% 1     2     3     1     2     3     1     2     3
-% 1     2     3     1     2     3     1     2     3
+    % a = [1,2,3];
+    % repmat(a, 2, 3)
+    % ans =
+    % 1     2     3     1     2     3     1     2     3
+    % 1     2     3     1     2     3     1     2     3
 
     % Compute the Hessian at phi.
     H = diag(repmat(1/var_prior,1,D+1));
@@ -47,6 +48,7 @@ function [predictions, phi] = fit_blogr (X, w, var_prior, X_test, initial_phi)
     
     % Set the mean and variance of the Laplace approximation.
     mu = phi;
+    %VARIANCE IS NEGATIVE
     var = -inv(H);
     
     % Compute mean and variance of the activation.

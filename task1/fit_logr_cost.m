@@ -18,7 +18,15 @@ function [L, g, H] = fit_logr_cost (phi, X, w, var_prior)
     D = size(X,1) - 1;
     
     % Initialize.
-    L = I * (-log (mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1))));
+    %L is infinity because the mvnpdf is 0
+    aux = 1e-150;
+    %aux = 0;
+    fprintf('D is: %d\n', D);
+    disp(phi);
+    disp(var_prior);
+    disp(mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1)));
+    L = I * (-log (mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1)) + aux ));
+    fprintf('First L: %f\n', L);
     g = I * phi / var_prior;
     H = I * diag(repmat(1/var_prior,1,D+1));
 
@@ -27,9 +35,10 @@ function [L, g, H] = fit_logr_cost (phi, X, w, var_prior)
         % Update L.
         y = predictions(i);
         if w(i) == 1
-            L = L - log(y);
+            L = L - log(y  + aux);
+            %fprintf('Updating L: %f\n', L);
         else
-            L = L - log(1-y);
+            L = L - log(1-y  + aux);
         end
         
         % Update g and H.
@@ -37,4 +46,5 @@ function [L, g, H] = fit_logr_cost (phi, X, w, var_prior)
         g = g + (y-w(i)) * x_i;
         H = H + y * (1-y) * (x_i * x_i');
     end
+    %disp(L);
 end
