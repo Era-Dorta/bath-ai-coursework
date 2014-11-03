@@ -27,7 +27,7 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     HH = cell(num_classes, num_classes);
     for i = 1 : num_classes
         for j = 1 : num_classes
-            HH{i,j} = zeros(D1,D1);
+            HH{i,j} = sparse(zeros(D1,D1));
         end
     end
     

@@ -7,7 +7,7 @@
 %            the first row of X equals ones(1,I),
 %        w - a Ix1 vector containing the corresponding world states for
 %            each training example,
-%        X_test - a data matrix containing training examples for which
+%        X_test - a (D+1)xI data matrix containing training examples for which
 %                 we need to make predictions,
 %        num_classes - number of classes.
 % Output: Predictions - (num_classes)xI_test matrix which contains the
