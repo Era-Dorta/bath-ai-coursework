@@ -42,6 +42,8 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
         % Update log likelihood L.
         L = L - log(Y(w(i),i));
         
+        XbyXtras = X(:, i) * X(:, i)';
+        
         start = 1;
         for n = 1 : num_classes
             % Update gradient.
@@ -51,7 +53,7 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
             
             % Update Hessian.            
             for m = 1 : num_classes
-                temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * X(:,i) * X(:,i)'; %Slowest lines
+                temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * XbyXtras; %Slowest lines
                 HH{m,n} = HH{m,n} + temp2; %Slow line too
             end
         end
