@@ -58,7 +58,7 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
             % end
 
             %Vectorized version of Hessian update
-            class_index = num2cell(1:10)';
+            class_index = num2cell(1:num_classes)';
 
             HH(:, n) = cellfun(@(x, m) x + Y(m,i) * (ddirac(m-n) - Y(n,i)) ...
                 * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
