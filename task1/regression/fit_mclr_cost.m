@@ -16,7 +16,7 @@
 function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     % Init.
     L = 0;
-    D1 = size(X,1); 
+    D1 = size(X,1);
     D = D1 - 1;
     Phi = reshape(phi,D1,num_classes);
     num_variables = D1 * num_classes;
@@ -31,44 +31,49 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
             HH{i,j} = sparse(D1,D1);
         end
     end
-    
+
     % Compute the predictions Y for X.
     Phi_X = Phi' * X;
     Phi_X_exp = exp(Phi_X);
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
-    
+
     for i = 1 : I
         % Update log likelihood L.
         L = L - log(Y(w(i),i));
-        
+
         XbyXtras = X(:, i) * X(:, i)';
-        
+
         start = 1;
         for n = 1 : num_classes
             % Update gradient.
             temp1 = (Y(n,i) - ddirac(w(i)-n)) * X(:,i);
             g(start : start+D) = g(start : start+D) + temp1;
             start = start + D1;
-            
-            % Update Hessian.            
-            for m = 1 : num_classes
-                temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * XbyXtras; %Slowest lines
-                HH{m,n} = HH{m,n} + temp2; %Slow line too
-            end
+
+            % Update Hessian.
+            % for m = 1 : num_classes
+            %  temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * XbyXtras; %Slowest lines
+            %  HH{m,n} = HH{m,n} + temp2; %Slow line too
+            % end
+
+            %Vectorized version of Hessian update
+            class_index = num2cell(1:10)';
+
+            HH(:, n) = cellfun(@(x, m) x + Y(m,i) * (ddirac(m-n) - Y(n,i)) ...
+                * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
         end
     end
-    
+
     % Assemble final Hessian.
-%     for n = 1 : num_classes
-%         H_n = [];
-%         for m = 1 : num_classes
-%             H_n = [H_n HH{n,m}];
-%         end
-%         H1 = [H1; H_n];
-%     end
-    
+    %     for n = 1 : num_classes
+    %         H_n = [];
+    %         for m = 1 : num_classes
+    %             H_n = [H_n HH{n,m}];
+    %         end
+    %         H1 = [H1; H_n];
+    %     end
+
+    % Vectorized version of assemble
     H = cell2mat(HH);
-    
-%    assert( isequal(H, H), 'test' );
 end
