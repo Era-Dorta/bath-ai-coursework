@@ -62,12 +62,14 @@ w = Y_train;
 % Fit a Bayesian logistic regression model.
 %initial_phi = [1; 1; 1];
 
-var_prior = 600;
-initial_phi = ones(data_n_dims + 1, 1);
+var_prior = 6;
+initial_phi = 10000 * ones(data_n_dims + 1, 1);
 [predictions, phi] = fit_blogr (X_train_blogr, w, var_prior, X_test_blogr, initial_phi);
 
-disp(predictions);
-disp(phi(1:10));
+%disp(predictions);
+%disp(phi(1:10));
+
+
 % Plot the results.
 % figure;
 % Z = reshape(predictions,n,n);

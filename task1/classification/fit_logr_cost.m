@@ -19,12 +19,12 @@ function [L, g, H] = fit_logr_cost (phi, X, w, var_prior)
     
     % Initialize.
     %L is infinity because the mvnpdf is 0
-    aux = 1e-150;
-    %aux = 0;
-    fprintf('D is: %d\n', D);
-    disp(phi);
-    disp(var_prior);
-    disp(mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1)));
+    %aux = 1e-150;
+    aux = 0;
+   % fprintf('D is: %d\n', D);
+    %disp(phi);
+    %disp(var_prior);
+    fprintf('First mvnpdf: %e\n', mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1)));
     L = I * (-log (mvnpdf (phi, zeros(D+1,1), var_prior*eye(D+1)) + aux ));
     fprintf('First L: %f\n', L);
     g = I * phi / var_prior;
