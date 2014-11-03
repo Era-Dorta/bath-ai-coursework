@@ -24,10 +24,11 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     H = [];
     I = size(X,2);
     ddirac = @(x) double(not(x));
+
     HH = cell(num_classes, num_classes);
     for i = 1 : num_classes
         for j = 1 : num_classes
-            HH{i,j} = sparse(zeros(D1,D1));
+            HH{i,j} = sparse(D1,D1);
         end
     end
     
@@ -57,11 +58,15 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     end
     
     % Assemble final Hessian.
-    for n = 1 : num_classes
-        H_n = [];
-        for m = 1 : num_classes
-            H_n = [H_n HH{n,m}];
-        end
-        H = [H; H_n];
-    end
+%     for n = 1 : num_classes
+%         H_n = [];
+%         for m = 1 : num_classes
+%             H_n = [H_n HH{n,m}];
+%         end
+%         H1 = [H1; H_n];
+%     end
+    
+    H = cell2mat(HH);
+    
+%    assert( isequal(H, H), 'test' );
 end
