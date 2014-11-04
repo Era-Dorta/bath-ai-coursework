@@ -26,9 +26,12 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     ddirac = @(x) double(not(x));
 
     HH = cell(num_classes, num_classes);
+    index_mat_cell = cell(num_classes, num_classes);
+    
     for i = 1 : num_classes
         for j = 1 : num_classes
             HH{i,j} = sparse(D1,D1);
+            index_mat_cell{i, j} = [i, j];
         end
     end
 
@@ -57,12 +60,17 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
             %  HH{m,n} = HH{m,n} + temp2; %Slow line too
             % end
 
-            %Vectorized version of Hessian update
-            class_index = num2cell(1:num_classes)';
-
-            HH(:, n) = cellfun(@(x, m) x + Y(m,i) * (ddirac(m-n) - Y(n,i)) ...
-                * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
+            %Vectorized v1 version of Hessian update
+            % class_index = num2cell(1:num_classes)';
+            %
+            % HH(:, n) = cellfun(@(x, m) x + Y(m,i) * (ddirac(m-n) - Y(n,i)) ...
+            %     * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
         end
+        
+        %Vectorized v2 version of Hessian update
+        HH = cellfun(@(x, ind) x + Y(ind(1),i) * (ddirac(ind(1)-ind(2)) ...
+            - Y(ind(2),i)) * XbyXtras, ...
+            HH, index_mat_cell, 'UniformOutput', false);                  
     end
 
     % Assemble final Hessian.
