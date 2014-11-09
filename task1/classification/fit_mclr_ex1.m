@@ -1,7 +1,7 @@
 close all;
 clear all;
 
-load('data/digitsData.mat');
+load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
 n_train = 2;
@@ -23,15 +23,28 @@ X_train_mclr = sparse([ones(1,size(X_train,1)); X_train']);
 X_test_mclr = sparse([ones(1,size(X_test,1)); X_test']);
 w = Y_train + 1;
 
-%profile on;
-tic;
+do_profile = 0;
+do_time = 1;
+
+if do_profile
+    profile on;
+end
+
+if do_time
+    tic;
+end
 
 % Fit a multi-class logistic regression model
 Predictions = fit_mclr (X_train_mclr, w, X_test_mclr, num_classes);
 
-toc;
-%profile off;
-
-for i=1:2
-    figure; imshow(reshape(X( i,: ), 28, 28));
+if do_time
+    toc;
 end
+
+if do_profile
+    profile off;
+end
+
+% for i=1:2
+%     figure; imshow(reshape(X( i,: ), 28, 28));
+% end
