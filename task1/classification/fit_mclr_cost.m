@@ -15,6 +15,7 @@
 %         H - the Hessian.
 function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     % Init.
+    %% Prev var
     L = 0;
     D1 = size(X,1);
     D = D1 - 1;
@@ -35,17 +36,16 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
         end
     end
 
-    % Compute the predictions Y for X.
+    %% Compute the predictions Y for X.
     Phi_X = Phi' * X;
     Phi_X_exp = exp(Phi_X);
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
+    %% Main loop
     for i = 1 : I
         % Update log likelihood L.
         L = L - log(Y(w(i),i));
-
-        XbyXtras = X(:, i) * X(:, i)';
 
         start = 1;
         for n = 1 : num_classes
@@ -67,12 +67,18 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
             %     * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
         end
         
-        %Vectorized v2 version of Hessian update
-        HH = cellfun(@(x, ind)  x + X(:, i) * Y(ind(1),i) * (ddirac(ind(1)-ind(2)) ...
-            - Y(ind(2),i)) * X(:, i)', ...
-            HH, index_mat_cell, 'UniformOutput', false);    
+        %Vectorized v2 version of Hessian update       
+        % HH = cellfun(@(x, ind)  x + X(:, i) * Y(ind(1),i) * (ddirac(ind(1)-ind(2)) ...
+        %  - Y(ind(2),i)) * X(:, i)', ...
+        %  HH, index_mat_cell, 'UniformOutput', false);    
     end
-
+    
+    %% Update hessian
+    %Vectorized v3 version of Hessian update 
+    HH = cellfun(@(x, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
+       - Y(ind(2),:)')) * X', ...
+        HH, index_mat_cell, 'UniformOutput', false);   
+    
     % Assemble final Hessian.
     %     for n = 1 : num_classes
     %         H_n = [];
@@ -82,6 +88,6 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
     %         H1 = [H1; H_n];
     %     end
 
-    % Vectorized version of assemble
+    %% Vectorized version of assemble
     H = cell2mat(HH);
 end
