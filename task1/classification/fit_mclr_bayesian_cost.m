@@ -13,8 +13,8 @@
 %         H - the Hessian.
 function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
     % Init.
-    %% Prev var
-    L = 0;
+    %% Adding prior to log likelyhood
+    L = -1 / (2 * prior) * (phi' * phi);
     D1 = size(X,1);
     D = D1 - 1;
     Phi = reshape(phi,D1,num_classes);
@@ -74,8 +74,7 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
     %% Update hessian
     %Vectorized v3 version of Hessian update 
     HH = cellfun(@(~, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
-       - Y(ind(2),:)')) * X', ...
-        HH, index_mat_cell, 'UniformOutput', false);   
+       - Y(ind(2),:)')) * X', HH, index_mat_cell, 'UniformOutput', false);   
     
     % Assemble final Hessian.
     %     for n = 1 : num_classes
