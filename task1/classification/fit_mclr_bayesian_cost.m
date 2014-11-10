@@ -1,5 +1,3 @@
-% Author: Stefan Stavrev 2013
-
 % Description: Cost function for multi-class logistic regression.
 % Input: phi - a (D+1)*num_classesx1 vector that contains the parameters
 %              that are subject to optimization,
