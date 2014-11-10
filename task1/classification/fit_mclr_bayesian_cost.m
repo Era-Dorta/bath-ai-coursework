@@ -40,6 +40,7 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
+    phi_over_prior = Phi/prior;
     %% Main loop
     for i = 1 : I
         % Update log likelihood L.
@@ -49,7 +50,7 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
         for n = 1 : num_classes
             % Update gradient.
             temp1 = (Y(n,i) - ddirac(w(i)-n)) * X(:,i);
-            g(start : start+D) = g(start : start+D) + temp1;
+            g(start : start+D) = g(start : start+D) + temp1 + phi_over_prior(:, n);
             start = start + D1;
 
             % Update Hessian.
@@ -74,7 +75,12 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
     %% Update hessian
     %Vectorized v3 version of Hessian update 
     HH = cellfun(@(~, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
-       - Y(ind(2),:)')) * X', HH, index_mat_cell, 'UniformOutput', false);   
+       - Y(ind(2),:)')) * X', HH, index_mat_cell, 'UniformOutput', false);
+   
+   inv_prior = diag(repmat(1/prior,1,D1));
+   for n = 1:num_classes
+        HH{n,n} = bsxfun(@plus, HH{n,n}, inv_prior); 
+   end
     
     % Assemble final Hessian.
     %     for n = 1 : num_classes
@@ -87,4 +93,5 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
 
     %% Vectorized version of assemble
     H = cell2mat(HH);
+    disp(L);
 end
