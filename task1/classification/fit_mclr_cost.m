@@ -90,4 +90,5 @@ function [L, g, H] = fit_mclr_cost (phi, X, w, num_classes)
 
     %% Vectorized version of assemble
     H = cell2mat(HH);
+    disp(L);
 end

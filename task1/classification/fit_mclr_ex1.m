@@ -54,6 +54,20 @@ if do_profile
     profile viewer;
 end
 
-% for i=1:2
-%     figure; imshow(reshape(X( i,: ), 28, 28));
-% end
+%% Accuracy
+predict2 = zeros(n_test,1);
+
+for i = 1: n_test
+   maximum = max (Predictions(:,i));
+   for j = 1:num_classes
+       if Predictions(j,i) >= maximum
+            predict2(i) = j - 1;       
+       end
+   end 
+end    
+
+compare = Y_test - predict2;
+accuracy = sum(compare(:) == 0)/n_test;
+disp(accuracy);
+
+b = [Y_test, predict2];
