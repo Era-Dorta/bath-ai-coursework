@@ -1,3 +1,9 @@
 rf/*
 CVM/*
 *~
+*.aux
+*.log
+*.blg
+*.synctex.gz
+*.bbl
+*~
