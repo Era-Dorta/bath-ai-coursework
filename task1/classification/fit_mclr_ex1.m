@@ -1,11 +1,13 @@
 close all;
 clear all;
 
+%% Load data
+
 load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
-n_train = 2;
-n_test = 2;
+n_train = 50;
+n_test = 50;
 
 % Pick the first n_train samples for training
 X_train = X(1:n_train, :);
@@ -27,6 +29,7 @@ do_profile = 0;
 do_time = 1;
 
 if do_profile
+    profile clear;
     profile on;
 end
 
@@ -34,8 +37,13 @@ if do_time
     tic;
 end
 
+prior = 100;
+
+%% Get predictions
+
 % Fit a multi-class logistic regression model
-Predictions = fit_mclr (X_train_mclr, w, X_test_mclr, num_classes);
+%Predictions = fit_mclr (X_train_mclr, w, X_test_mclr, num_classes);
+Predictions = fit_mclr_bayesian(X_train_mclr, w, X_test_mclr, num_classes, prior);
 
 if do_time
     toc;
@@ -43,6 +51,7 @@ end
 
 if do_profile
     profile off;
+    profile viewer;
 end
 
 % for i=1:2
