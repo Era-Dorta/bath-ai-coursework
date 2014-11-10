@@ -26,7 +26,7 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
 
     HH = cell(num_classes, num_classes);
     index_mat_cell = cell(num_classes, num_classes);
-    
+
     for i = 1 : num_classes
         for j = 1 : num_classes
             HH{i,j} = sparse(D1,D1);
@@ -65,23 +65,22 @@ function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
             % HH(:, n) = cellfun(@(x, m) x + Y(m,i) * (ddirac(m-n) - Y(n,i)) ...
             %     * XbyXtras, HH(:, n), class_index, 'UniformOutput', false);
         end
-        
-        %Vectorized v2 version of Hessian update       
+
+        %Vectorized v2 version of Hessian update
         % HH = cellfun(@(x, ind)  x + X(:, i) * Y(ind(1),i) * (ddirac(ind(1)-ind(2)) ...
         %  - Y(ind(2),i)) * X(:, i)', ...
-        %  HH, index_mat_cell, 'UniformOutput', false);    
+        %  HH, index_mat_cell, 'UniformOutput', false);
     end
-    
+
     %% Update hessian
-    %Vectorized v3 version of Hessian update 
-    HH = cellfun(@(~, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
-       - Y(ind(2),:)')) * X', HH, index_mat_cell, 'UniformOutput', false);
-   
-   inv_prior = diag(repmat(1/prior,1,D1));
-   for n = 1:num_classes
-        HH{n,n} = bsxfun(@plus, HH{n,n}, inv_prior); 
-   end
     
+    %Vectorized v3 version of Hessian update
+    inv_prior = diag(repmat(1/prior,1,D1));
+    
+    HH = cellfun(@(~, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
+        - Y(ind(2),:)')) * X' + (ind(1) == ind(2))*inv_prior, ...
+        HH, index_mat_cell, 'UniformOutput', false);
+
     % Assemble final Hessian.
     %     for n = 1 : num_classes
     %         H_n = [];
