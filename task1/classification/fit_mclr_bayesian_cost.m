@@ -11,7 +11,7 @@
 % Output: f - the value of the function,
 %         g - the gradient,
 %         H - the Hessian.
-function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, num_classes, prior)
+function [L, g, H] = fit_mclr_bayesian_cost (phi, X, w, prior, num_classes)
     % Init.
     %% Adding prior to log likelyhood
     L = -1 / (2 * prior) * (phi' * phi);
