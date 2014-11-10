@@ -25,22 +25,20 @@ function Predictions = fit_mclr_bayesian (X, w, prior, X_test, num_classes)
 	Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
 	Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
-
 	%%
 	I = size(X_test,2);
 	var_a = zeros(I,num_classes);
 	sigma_a = zeros(I,num_classes);
 	Predictions = zeros(num_classes,I);
 
-	mu_a = Phi' * X;
+	mu_a = Phi' * X_test;
 
     inv_prior = diag(repmat(1/prior,1,D1));
 	for n = 1:num_classes
 	    % Get Hessian for the one class
         % ddirac(n - n) = 1
-	    H = X * diag(Y(n,:)' .* (1 - Y(n,:)')) * X' + inv_prior;
-	    var_a(:,n) = diag(X' * (H\X));
-	    sigma_a(:,n) = sqrt(var_a(:,n));
+	    H = X_test * diag(Y(n,:)' .* (1 - Y(n,:)')) * X_test' + inv_prior;
+	    sigma_a(:,n) = sqrt(diag(X_test' * (H\X_test)));
 	end
 
 	N = 10000; % number of samples

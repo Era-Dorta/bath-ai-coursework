@@ -6,8 +6,8 @@ clear all;
 load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
-n_train = 20;
-n_test = 20;
+n_train = 1500;
+n_test = 1500;
 
 prior = 100;
 
