@@ -31,7 +31,18 @@ CM50246: Machine Learning and AI}
  
 Given pictures from the world and been asked to classify them in several groups, we are faced with a problem of multi-class classification.
 One of the options would be to create N one-against-all binary classifiers.
+
+\begin{equation}
+\label{bernoulliDistribution}
+Pr(w|\mathbf{x}) = Bern_{w}[\lambda]\,
+\end{equation}
+
 However a better one involves using a categorical distribution to model our world.
+
+\begin{equation}
+\label{categoricalDistribution}
+Pr(w|\mathbf{x}) = Cat_{w}[\lambda[\mathbf{x}]]\,
+\end{equation}
 
  
 \section{Implementation}
