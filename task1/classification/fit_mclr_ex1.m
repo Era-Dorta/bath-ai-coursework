@@ -6,8 +6,10 @@ clear all;
 load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
-n_train = 50;
-n_test = 50;
+n_train = 20;
+n_test = 20;
+
+prior = 100;
 
 % Pick the first n_train samples for training
 X_train = X(1:n_train, :);
@@ -25,6 +27,7 @@ X_train_mclr = sparse([ones(1,size(X_train,1)); X_train']);
 X_test_mclr = sparse([ones(1,size(X_test,1)); X_test']);
 w = Y_train + 1;
 
+%% Profiling
 do_profile = 0;
 do_time = 1;
 
@@ -37,13 +40,11 @@ if do_time
     tic;
 end
 
-prior = 100;
-
 %% Get predictions
 
 % Fit a multi-class logistic regression model
 %Predictions = fit_mclr (X_train_mclr, w, X_test_mclr, num_classes);
-Predictions = fit_mclr_bayesian(X_train_mclr, w, X_test_mclr, num_classes, prior);
+Predictions = fit_mclr_bayesian(X_train_mclr, w, prior, X_test_mclr, num_classes);
 
 if do_time
     toc;
@@ -55,19 +56,11 @@ if do_profile
 end
 
 %% Accuracy
-predict2 = zeros(n_test,1);
+[~, predictions_class] = max(Predictions);
+predictions_class = (predictions_class - 1)';
 
-for i = 1: n_test
-   maximum = max (Predictions(:,i));
-   for j = 1:num_classes
-       if Predictions(j,i) >= maximum
-            predict2(i) = j - 1;       
-       end
-   end 
-end    
-
-compare = Y_test - predict2;
+compare = Y_test - predictions_class;
 accuracy = sum(compare(:) == 0)/n_test;
 disp(accuracy);
 
-b = [Y_test, predict2];
+b = [Y_test, predictions_class];
