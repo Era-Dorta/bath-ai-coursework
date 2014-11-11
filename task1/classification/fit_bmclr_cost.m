@@ -29,7 +29,7 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
 
     for i = 1 : num_classes
         for j = 1 : num_classes
-            HH{i,j} = sparse(D1,D1);
+            HH{i,j} = zeros(D1,D1);
             index_mat_cell{i, j} = [i, j];
         end
     end

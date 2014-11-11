@@ -4,7 +4,7 @@ clear all;
 %% Load data
 
 % {Digits, eth-80, sport_bow} = {1, 2, 3}
-data_index = 1;
+data_index = 2;
 
 data_paths = {'data/MNIST_Data.mat', 'data/ETH-80_HoG_Data.mat', 'data/UIUCSport_BoW_Data.mat'};
 
@@ -14,9 +14,8 @@ num_classes = length(unique(Y));
 n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
 
-prior = 100;
-
 if data_index == 1
+    prior = 10;
     % Pick the first n_train samples for training
     X_train = X(1:n_train, :);
     Y_train = Y(1:n_train);
@@ -31,6 +30,7 @@ if data_index == 1
 end
 
 if data_index == 2 || data_index == 3
+    prior = 1000;
     % Pick the first n_train samples for training
     X_train = X(trainingIndices, :);
     Y_train = Y(trainingIndices);
@@ -45,8 +45,8 @@ end
 data_n_dims = size(X_train, 2);
 
 % When the data has a lot of zeros sparse matrices improve efficiency
-X_train_mclr = sparse([ones(1,size(X_train,1)); X_train']);
-X_test_mclr = sparse([ones(1,size(X_test,1)); X_test']);
+X_train_bmclr = [ones(1,size(X_train,1)); X_train'];
+X_test_bmclr = [ones(1,size(X_test,1)); X_test'];
 
 %% Profiling
 do_profile = 0;
@@ -64,10 +64,10 @@ end
 %% Get predictions
 
 % Fit a bayesian multi-class logistic regression model
-Predictions = fit_bmclr(X_train_mclr, w, prior, X_test_mclr, num_classes);
+Predictions = fit_bmclr(X_train_bmclr, w, prior, X_test_bmclr, num_classes);
 
 if do_time
-    toc;
+    total_time = toc
 end
 
 if do_profile
