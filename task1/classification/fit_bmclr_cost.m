@@ -50,7 +50,7 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
         for n = 1 : num_classes
             % Update gradient.
             temp1 = (Y(n,i) - ddirac(w(i)-n)) * X(:,i);
-            g(start : start+D) = g(start : start+D) + temp1 + phi_over_prior(:, n);
+            g(start : start+D) = g(start : start+D) + temp1;
             start = start + D1;
 
             % Update Hessian.
@@ -71,7 +71,10 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
         %  - Y(ind(2),i)) * X(:, i)', ...
         %  HH, index_mat_cell, 'UniformOutput', false);
     end
-
+    
+    % Extra gradient term for bayesian classification 
+    g = g + phi_over_prior(:);   
+    
     %% Update hessian
     
     %Vectorized v3 version of Hessian update

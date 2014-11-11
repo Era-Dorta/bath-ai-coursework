@@ -14,7 +14,7 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
     % Optimize for phi.
     D1 = size(X,1);
     options = optimset('GradObj','on','Hessian','on');
-    initial_phi = ones(D1*num_classes, 1);
+    initial_phi = ones(D1*num_classes, 1)/num_classes;
     phi = fminunc(@(phi) fit_bmclr_cost(phi, X, w, prior, num_classes),...
         initial_phi, options);
 

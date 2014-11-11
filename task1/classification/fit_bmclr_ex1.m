@@ -4,7 +4,7 @@ clear all;
 %% Load data
 
 % {Digits, eth-80, sport_bow} = {1, 2, 3}
-data_index = 2;
+data_index = 1;
 
 data_paths = {'data/MNIST_Data.mat', 'data/ETH-80_HoG_Data.mat', 'data/UIUCSport_BoW_Data.mat'};
 
@@ -15,7 +15,7 @@ n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
 
 if data_index == 1
-    prior = 10;
+    prior = 100;
     % Pick the first n_train samples for training
     X_train = X(1:n_train, :);
     Y_train = Y(1:n_train);
