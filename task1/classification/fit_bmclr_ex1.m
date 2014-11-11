@@ -15,7 +15,7 @@ n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
 
 if data_index == 1
-    prior = 100;
+    prior = 10;
     % Pick the first n_train samples for training
     X_train = X(1:n_train, :);
     Y_train = Y(1:n_train);
@@ -31,20 +31,17 @@ end
 
 if data_index == 2 || data_index == 3
     prior = 1000;
-    % Pick the first n_train samples for training
+    % Pick trainingIndices samples for training
     X_train = X(trainingIndices, :);
     Y_train = Y(trainingIndices);
 
-    % And the next n_test samples for testing
+    % Pick testIndices samples for testing
     X_test = X(testIndices, :);
     Y_test = Y(testIndices);
     w = Y_train;
 end
 
-% Format the data for fit_mclr_bayesian
-data_n_dims = size(X_train, 2);
-
-% When the data has a lot of zeros sparse matrices improve efficiency
+% Format the data for fit_bmclr
 X_train_bmclr = [ones(1,size(X_train,1)); X_train'];
 X_test_bmclr = [ones(1,size(X_test,1)); X_test'];
 
@@ -75,12 +72,12 @@ if do_profile
     profile viewer;
 end
 
-%% Accuracy
-% Prediction is the one with the highest probability
+%% Accuracy measurement
+% Predicted class is the one with the highest probability score
 [~, predictions_class] = max(Predictions);
 
 if data_index == 1
-    % Decrease class index number back
+    % Decrease class index number back to original
     predictions_class = (predictions_class - 1);
 end
 

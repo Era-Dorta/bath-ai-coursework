@@ -20,7 +20,7 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
 
     Phi = reshape(phi,D1,num_classes);
     
-    %% Laplace approximation: Evaluate the Hessian at phi hat
+    %% Laplace approximation and prediction calculations
     Phi_X_exp = exp(Phi' * X);
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
@@ -34,7 +34,7 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
     inv_prior = diag(repmat(1/prior,1,D1));
     for n = 1:num_classes
         % Hessian for the current class, taken from the vectorized
-        % hessian calculation in fit_mclr_bayesian_cost
+        % hessian calculation in fit_bmclr
         % ddirac(n - n) = 1
         H = X_test * diag(Y(n,:)' .* (1 - Y(n,:)')) * X_test' + inv_prior;
         sigma_a(:,n) = sqrt(diag(X_test' * (H\X_test)));

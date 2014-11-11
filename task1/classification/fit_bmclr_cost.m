@@ -12,8 +12,8 @@
 %         g - the gradient,
 %         H - the Hessian.
 function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
-    % Init.
-    %% Adding prior to log likelyhood
+    % Initialization
+    %% Adding prior to log likelihood
     L = -1 / (2 * prior) * (phi' * phi);
     D1 = size(X,1);
     D = D1 - 1;
@@ -24,7 +24,9 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
     I = size(X,2);
     ddirac = @(x) double(not(x));
 
+    % Create a num_class by num_class cell of hessian matrices
     HH = cell(num_classes, num_classes);
+    % Create a num_class by num_class cell of indices for the hessian
     index_mat_cell = cell(num_classes, num_classes);
 
     for i = 1 : num_classes
@@ -40,8 +42,9 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
-    phi_over_prior = Phi/prior;
-    %% Main loop
+    %% Log likelihood and gradient update loop
+    % It is not vectorized because because the hessian update is the slowest
+    % part by far
     for i = 1 : I
         % Update log likelihood L.
         L = L - log(Y(w(i),i));
@@ -53,10 +56,10 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
             g(start : start+D) = g(start : start+D) + temp1;
             start = start + D1;
 
-            % Update Hessian.
+            % Update Hessian, left for reference of vectorization process
             % for m = 1 : num_classes
-            %  temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * XbyXtras; %Slowest lines
-            %  HH{m,n} = HH{m,n} + temp2; %Slow line too
+            %  temp2 = Y(m,i) * (ddirac(m-n) - Y(n,i)) * XbyXtras; 
+            %  HH{m,n} = HH{m,n} + temp2;
             % end
 
             %Vectorized v1 version of Hessian update
@@ -72,14 +75,15 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
         %  HH, index_mat_cell, 'UniformOutput', false);
     end
     
-    % Extra gradient term for bayesian classification 
+    % Extra gradient term for bayesian classification
+    phi_over_prior = Phi/prior;
     g = g + phi_over_prior(:);   
     
     %% Update hessian
     
     %Vectorized v3 version of Hessian update
     inv_prior = diag(repmat(1/prior,1,D1));
-    
+    %For bayesian, if working on the diagonal then add the prior inverse
     HH = cellfun(@(~, ind) X * diag(Y(ind(1),:)' .* (ddirac(ind(1)-ind(2)) ...
         - Y(ind(2),:)')) * X' + (ind(1) == ind(2))*inv_prior, ...
         HH, index_mat_cell, 'UniformOutput', false);
@@ -93,7 +97,7 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
     %         H1 = [H1; H_n];
     %     end
 
-    %% Vectorized version of assemble
+    %% Assemble using built in functions
     H = cell2mat(HH);
     disp(L);
 end
