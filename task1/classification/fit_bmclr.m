@@ -19,6 +19,7 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
         initial_phi, options);
 
     Phi = reshape(phi,D1,num_classes);
+    
     %% Laplace approximation: Evaluate the Hessian at phi hat
     Phi_X_exp = exp(Phi' * X);
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
