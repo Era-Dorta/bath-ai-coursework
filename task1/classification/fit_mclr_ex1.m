@@ -6,8 +6,8 @@ clear all;
 load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
-n_train = 1500;
-n_test = 1500;
+n_train = 10;
+n_test = 10;
 
 prior = 100;
 
@@ -26,6 +26,7 @@ data_n_dims = size(X_train, 2);
 % When the data has a lot of zeros sparse matrices improve efficiency
 X_train_mclr = sparse([ones(1,size(X_train,1)); X_train']);
 X_test_mclr = sparse([ones(1,size(X_test,1)); X_test']);
+% Increase class index number for matlab easy indexing
 w = Y_train + 1;
 
 %% Profiling
@@ -56,9 +57,13 @@ if do_profile
 end
 
 %% Accuracy
+% Prediction is the one with the highest probability
 [~, predictions_class] = max(Predictions);
+
+% Decrease class index number back
 predictions_class = (predictions_class - 1)';
 
-compare = Y_test - predictions_class;
-accuracy = sum(compare(:) == 0)/n_test;
-disp(accuracy);
+% Get percentage of correct predictions
+array_correct_pred = Y_test - predictions_class;
+hits = (sum(array_correct_pred == 0)/n_test) * 100;
+fprintf('Hits: %2.2f%%\n', hits);
