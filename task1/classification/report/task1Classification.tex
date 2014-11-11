@@ -1,7 +1,7 @@
 \documentclass[12pt]{article}
  
 \usepackage[margin=1in]{geometry} 
-\usepackage{amsmath,amsthm,amssymb}
+\usepackage{amsmath,amsthm,amssymb,bm}
  
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -30,22 +30,32 @@ CM50246: Machine Learning and AI}
 \section{Introduction}
  
 Given pictures from the world and been asked to classify them in several groups, we are faced with a problem of multi-class classification.
-One of the options would be to create N one-against-all binary classifiers.
+One of the options would be to create N one-against-all binary classifiers. Using $x$ to denote our data, $\omega$ to for the world state, and $lambda$ for the probability of observing the given class.
 
 \begin{equation}
 \label{bernoulliDistribution}
-Pr(w|\mathbf{x}) = Bern_{w}[\lambda]\,
+Pr(\omega|\mathbf{x}) = Bern_{w}[\lambda]\,
 \end{equation}
 
-However a better one involves using a categorical distribution to model our world.
+However a better one involves using a categorical distribution to model our world. Where $\bm{\lambda}$ is a vector that contains a $\lambda$ for each class.
 
 \begin{equation}
 \label{categoricalDistribution}
-Pr(w|\mathbf{x}) = Cat_{w}[\lambda[\mathbf{x}]]\,
+Pr(\omega|\mathbf{x}) = Cat_{w}[\bm{\lambda}[\mathbf{x}]]\,
+\end{equation}
+
+\section{Mathematical derivation}
+
+As stated in the introduction, we are going to fit a Categorical probability model into our data. 
+Using Bayes' rule we have:
+
+\begin{equation}
+\label{bayes}
+Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
 \end{equation}
 
 Since we are solving for multi-class classification a logistic sigmoid function as activation will not be valid.
-Therefore a softmax function is used instead for each activation.
+Therefore a softmax function is used instead for each activation $a_{n}$.
 
 \begin{equation}
 \label{activations}
@@ -55,11 +65,20 @@ a_{n} = \phi_{n}^{T}x\,
 \begin{equation}
 \label{softmax}
 \lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] = 
-\frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }= \,
+\frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
 \end{equation}
-
  
 \section{Implementation}
+
+
+\section{Results}
+
+Digits dataset, with prior 100, initial phi ones
+Elapsed time is 414.619122 seconds.
+Hits: 71.87%
+
+\section{Conclusion}
+
 
  
 \end{document}
