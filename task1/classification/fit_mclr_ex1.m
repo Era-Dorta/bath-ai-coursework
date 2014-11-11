@@ -20,9 +20,10 @@ X_test = X(n_train + 1:n_train + n_test, :);
 Y_test = Y(n_train + 1:n_train + n_test);
 
 
-% Format the data for fit_blogr
+% Format the data for fit_mclr_bayesian
 data_n_dims = size(X_train, 2);
 
+% When the data has a lot of zeros sparse matrices improve efficiency
 X_train_mclr = sparse([ones(1,size(X_train,1)); X_train']);
 X_test_mclr = sparse([ones(1,size(X_test,1)); X_test']);
 w = Y_train + 1;
@@ -42,8 +43,7 @@ end
 
 %% Get predictions
 
-% Fit a multi-class logistic regression model
-%Predictions = fit_mclr (X_train_mclr, w, X_test_mclr, num_classes);
+% Fit a bayesian multi-class logistic regression model
 Predictions = fit_mclr_bayesian(X_train_mclr, w, prior, X_test_mclr, num_classes);
 
 if do_time
@@ -62,5 +62,3 @@ predictions_class = (predictions_class - 1)';
 compare = Y_test - predictions_class;
 accuracy = sum(compare(:) == 0)/n_test;
 disp(accuracy);
-
-b = [Y_test, predictions_class];
