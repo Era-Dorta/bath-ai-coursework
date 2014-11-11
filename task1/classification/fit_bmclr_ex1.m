@@ -3,11 +3,13 @@ clear all;
 
 %% Load data
 
-load('data/MNIST_Data.mat');
+%load('data/MNIST_Data.mat');
+load('data/ETH-80_HoG_Data.mat');
+%load('data/UIUCSport_BoW_Data.mat')
 
 num_classes = length(unique(Y));
-n_train = 1500;
-n_test = 1500;
+n_train = size(trainingIndices, 1);
+n_test = size(testIndices, 1);
 
 prior = 100;
 
