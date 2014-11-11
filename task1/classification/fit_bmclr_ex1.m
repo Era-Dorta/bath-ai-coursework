@@ -30,7 +30,7 @@ if data_index == 1
     w = Y_train + 1;
 end
 
-if data_index == 2
+if data_index == 2 || data_index == 3
     % Pick the first n_train samples for training
     X_train = X(trainingIndices, :);
     Y_train = Y(trainingIndices);
