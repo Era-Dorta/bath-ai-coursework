@@ -6,8 +6,8 @@ clear all;
 load('data/MNIST_Data.mat');
 
 num_classes = length(unique(Y));
-n_train = 10;
-n_test = 10;
+n_train = 50;
+n_test = 50;
 
 prior = 100;
 
@@ -45,7 +45,7 @@ end
 %% Get predictions
 
 % Fit a bayesian multi-class logistic regression model
-Predictions = fit_mclr_bayesian(X_train_mclr, w, prior, X_test_mclr, num_classes);
+Predictions = fit_bmclr(X_train_mclr, w, prior, X_test_mclr, num_classes);
 
 if do_time
     toc;
