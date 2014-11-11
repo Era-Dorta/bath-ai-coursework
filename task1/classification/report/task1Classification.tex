@@ -44,6 +44,20 @@ However a better one involves using a categorical distribution to model our worl
 Pr(w|\mathbf{x}) = Cat_{w}[\lambda[\mathbf{x}]]\,
 \end{equation}
 
+Since we are solving for multi-class classification a logistic sigmoid function as activation will not be valid.
+Therefore a softmax function is used instead for each activation.
+
+\begin{equation}
+\label{activations}
+a_{n} = \phi_{n}^{T}x\,
+\end{equation}
+
+\begin{equation}
+\label{softmax}
+\lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] = 
+\frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }= \,
+\end{equation}
+
  
 \section{Implementation}
 
