@@ -47,13 +47,15 @@ Pr(\omega|\mathbf{x}) = Cat_{w}[\bm{\lambda}[\mathbf{x}]]\,
 \section{Mathematical derivation}
 
 As stated in the introduction, we are going to fit a Categorical probability model into our data. 
-Using Bayes' rule we have:
+Denoting $I$ as the total number of data points that we are given.  
+Then, using Bayes' rule we have:
 
 \begin{equation}
 \label{bayes}
 Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
 \end{equation}
 
+We need N activation functions to enforce the constrains.
 Since we are solving for multi-class classification a logistic sigmoid function as activation will not be valid.
 Therefore a softmax function is used instead for each activation $a_{n}$.
 
@@ -66,6 +68,13 @@ a_{n} = \phi_{n}^{T}x\,
 \label{softmax}
 \lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] = 
 \frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
+\end{equation}
+
+In order to simplify the calculations we are going to minimise the log of the probability:
+
+\begin{equation}
+\label{L}
+\L = - log \sum_{i = 1}^{I} P(\omega = k | \mathbf{x}, \theta) = - log \sum_{i = 1}^{I} softmax[a_{n}]\,
 \end{equation}
  
 \section{Implementation}
