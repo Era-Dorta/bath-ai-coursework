@@ -81,10 +81,10 @@ end
 
 if data_index == 1
     % Decrease class index number back
-    predictions_class = (predictions_class - 1)';
+    predictions_class = (predictions_class - 1);
 end
 
 % Get percentage of correct predictions
-array_correct_pred = Y_test - predictions_class;
+array_correct_pred = Y_test - predictions_class';
 hits = (sum(array_correct_pred == 0)/n_test) * 100;
 fprintf('Hits: %2.2f%%\n', hits);
