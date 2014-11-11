@@ -26,10 +26,9 @@ function Predictions = fit_mclr_bayesian (X, w, prior, X_test, num_classes)
 	Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
 	%%
-	I = size(X_test,2);
-	var_a = zeros(I,num_classes);
-	sigma_a = zeros(I,num_classes);
-	Predictions = zeros(num_classes,I);
+	num_test = size(X_test, 2);
+	sigma_a = zeros(num_test, num_classes);
+	Predictions = zeros(num_classes, num_test);
 
 	mu_a = Phi' * X_test;
 
@@ -42,7 +41,7 @@ function Predictions = fit_mclr_bayesian (X, w, prior, X_test, num_classes)
 	end
 
 	N = 10000; % number of samples
-	for i = 1:I
+	for i = 1:num_test
 	    % Monte Carlo integration
 	    a_samp = bsxfun(@plus, diag(sigma_a(i,:))*randn(num_classes,N), mu_a(:,i));
 	    a_exp = exp(a_samp);
