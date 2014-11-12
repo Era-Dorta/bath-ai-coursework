@@ -70,7 +70,7 @@ L = - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi
 With gradient and Hessian updates being:
 
 \begin{align}
-\label{L}
+\label{Grad-Hess-Update}
 \frac{\delta L}{ \delta \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
 \frac{\delta^{2} L}{ \delta \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
 \end{align}
@@ -89,31 +89,26 @@ The first one consists of hand drawn images of single digits from zero to nine,
 stored as 28x28 matrix of pixel values.
 While the second one consists of pictures of eight different objects against a blue background, stored as a 576 vector of pixel value.
 
+Below are the prediction accuracy results for different variances for the normal distribution in the prior and for the initial $\phi$ vector. 
+
 \begin{table}[h]
 \begin{tabular}{l|lllllll}
-Digits &  &  &  &  &  &  &  \\ \hline
+Digits data set &  &  &  &  &  &  &  \\ \hline
 Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \hline
-Initial phi & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2.5} \\ \hline
-Accuray & \multicolumn{1}{l|}{88\%} & \multicolumn{1}{l|}{86\%} & \multicolumn{1}{l|}{77\%} & \multicolumn{1}{l|}{48\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{83\%} \\ \hline
+Initial $\phi$ & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2.5} \\ \hline
+Prediction Accuracy & \multicolumn{1}{l|}{88\%} & \multicolumn{1}{l|}{86\%} & \multicolumn{1}{l|}{77\%} & \multicolumn{1}{l|}{48\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{83\%} \\ \hline
 \end{tabular}
 \end{table}
 
 \begin{table}[h]
 \begin{tabular}{l|lllllll}
-ETH-80-HoG &  &  &  &  &  &  &  \\ \hline
+ETH-80-HoG data set &  &  &  &  &  &  &  \\ \hline
 Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} \\ \hline
-Initial phi & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{-10} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{10} \\ \hline
-Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \multicolumn{1}{l|}{84\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} \\ \hline
+Initial $\phi$ & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{-10} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{10} \\ \hline
+Prediction Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \multicolumn{1}{l|}{84\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} \\ \hline
 \end{tabular}
 \end{table}
 
-Digits initial phi 2.5 works, 5 or bigger runs on NaN error,  -10 gives NaN too, -1 works
-Digits dataset, with prior 100, initial phi ones
-Elapsed time is 414.619122 seconds.
-Hits: 71.87%
-
-\section{Conclusion}
-
-
+For the \textit{Digits} data set initial $\phi$ vector values smaller than -10 and bigger than 5 would give NaN. 
  
 \end{document}
