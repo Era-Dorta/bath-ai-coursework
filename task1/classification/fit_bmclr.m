@@ -25,9 +25,9 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
     Phi_X_exp_sums = 1 ./ sum(Phi_X_exp,1);
     Y = bsxfun(@times, Phi_X_exp, Phi_X_exp_sums);
 
-    num_test = size(X_test, 2);
-    sigma_a = zeros(num_test, num_classes);
-    Predictions = zeros(num_classes, num_test);
+    n_test = size(X_test, 2);
+    sigma_a = zeros(n_test, num_classes);
+    Predictions = zeros(num_classes, n_test);
 
     mu_a = Phi' * X_test;
 
@@ -43,11 +43,11 @@ function Predictions = fit_bmclr (X, w, prior, X_test, num_classes)
     %% Monte Carlo integration
     N = 10000; % number of samples
     inv_N = 1 / N;
-    for i = 1:num_test
+    for i = 1:n_test
         a_samp = bsxfun(@plus, diag(sigma_a(i,:)) * randn(num_classes,N), mu_a(:,i));
         a_exp = exp(a_samp);
-        a_exp_sums = 1./sum(a_exp, 1);
-        a_softmax = bsxfun(@times, a_exp, a_exp_sums);
+        a_exp_sum = 1./sum(a_exp, 1);
+        a_softmax = bsxfun(@times, a_exp, a_exp_sum);
         Predictions(:,i) = inv_N * sum(a_softmax,2);
     end
 end
