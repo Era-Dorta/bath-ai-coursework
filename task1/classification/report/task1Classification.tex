@@ -52,25 +52,20 @@ We need N activation functions to enforce the constrains.
 Since we are solving for multi-class classification a logistic sigmoid function as activation will not be valid.
 Therefore a softmax function is used instead for each activation $a_{n}$.
 
-\begin{equation}
+\begin{align}
 \label{activations}
-a_{n} = \phi_{n}^{T}x\,
-\end{equation}
-
-\begin{equation}
-\label{softmax}
-\lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] = 
+a_{n} &= \phi_{n}^{T}x \\
+\lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] &= 
 \frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
-\end{equation}
+\end{align}
 
 For the Prior we are going to use a Normal distribution with zero mean and $\sigma$ variance.
-In order to simplify the calculations we are going to minimise the log of the probability:
+In order to simplify the calculations we are going to minimise the log of the probability, where $y_{in}$ is the softmax expression for class $n$ and data $i$:
 
-\begin{align}
+\begin{equation}
 \label{L}
-\L &= - \sum_{i = 1}^{I} log \left[ P(\omega = k | \mathbf{x}, \phi) \right]  + log \left[ Pr(\phi) \right] \nonumber \\
-&= - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
-\end{align}
+L = - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
+\end{equation}
 
 With gradient and Hessian updates being:
 
@@ -81,6 +76,11 @@ With gradient and Hessian updates being:
 \end{align}
 
 To make the predictions we evaluate a new sample doing a Laplace approximation and then a Monte Carlo integration
+
+\begin{equation}
+\label{Predictions}
+predictions = \int y_{in} \mathcal{N}_{a} \left( \mu_{a}, \Sigma_{a} \right) da
+\end{equation}
  
 \section{Implementation}
 
