@@ -37,7 +37,7 @@ One of the options would be to create N one-against-all binary classifiers. Usin
 Pr(\omega|\mathbf{x}) = Cat_{w}[\bm{\lambda}[\mathbf{x}]]\,
 \end{equation}
 
-\section{Mathematical derivation}
+\section{The problem}
 
 As stated in the introduction, we are going to fit a Categorical probability model into our data. 
 Denoting $I$ as the total number of data points that we are given.  
@@ -82,10 +82,25 @@ To make the predictions we evaluate a new sample doing a Laplace approximation a
 predictions = \int y_{in} \mathcal{N}_{a} \left( \mu_{a}, \Sigma_{a} \right) da
 \end{equation}
  
-\section{Implementation}
-
-
 \section{Results}
+
+\begin{table}[h]
+\begin{tabular}{l|lllllll}
+Digits &  &  &  &  &  &  &  \\ \hline
+Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \hline
+Initial phi & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2.5} \\ \hline
+Accuray & \multicolumn{1}{l|}{88\%} & \multicolumn{1}{l|}{86\%} & \multicolumn{1}{l|}{77\%} & \multicolumn{1}{l|}{48\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{83\%} \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\begin{tabular}{l|lllllll}
+ETH-80-HoG &  &  &  &  &  &  &  \\ \hline
+Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} \\ \hline
+Initial phi & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{-10} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{10} \\ \hline
+Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \multicolumn{1}{l|}{84\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} \\ \hline
+\end{tabular}
+\end{table}
 
 Digits initial phi 2.5 works, 5 or bigger runs on NaN error,  -10 gives NaN too, -1 works
 Digits dataset, with prior 100, initial phi ones
