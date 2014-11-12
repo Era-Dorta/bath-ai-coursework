@@ -70,12 +70,23 @@ a_{n} = \phi_{n}^{T}x\,
 \frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
 \end{equation}
 
+For the Prior we are going to use a Normal distribution with zero mean and $\sigma$ variance.
 In order to simplify the calculations we are going to minimise the log of the probability:
 
-\begin{equation}
+\begin{align}
 \label{L}
-\L = - log \sum_{i = 1}^{I} P(\omega = k | \mathbf{x}, \theta) = - log \sum_{i = 1}^{I} softmax[a_{n}]\,
-\end{equation}
+\L &= - \sum_{i = 1}^{I} log \left[ P(\omega = k | \mathbf{x}, \phi) \right]  + log \left[ Pr(\phi) \right] \nonumber \\
+&= - log \sum_{i = 1}^{I} softmax[a_{n}] + \mathcal{N} \left( 0, I \sigma^{2} \right) \nonumber \\
+&= - log \sum_{i = 1}^{I} ????????? + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
+\end{align}
+
+With gradient and Hessian updates being:
+
+\begin{align}
+\label{L}
+\frac{\delta L}{ \delta \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i} \nonumber \\
+\frac{\delta^{2} L}{ \delta \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) \nonumber \\
+\end{align}
  
 \section{Implementation}
 
