@@ -30,14 +30,7 @@ CM50246: Machine Learning and AI}
 \section{Introduction}
  
 Given pictures from the world and been asked to classify them in several groups, we are faced with a problem of multi-class classification.
-One of the options would be to create N one-against-all binary classifiers. Using $x$ to denote our data, $\omega$ to for the world state, and $lambda$ for the probability of observing the given class.
-
-\begin{equation}
-\label{bernoulliDistribution}
-Pr(\omega|\mathbf{x}) = Bern_{w}[\lambda]\,
-\end{equation}
-
-However a better one involves using a categorical distribution to model our world. Where $\bm{\lambda}$ is a vector that contains a $\lambda$ for each class.
+One of the options would be to create N one-against-all binary classifiers. Using $x$ to denote our data, $\omega$ to for the world state, and $lambda$ for the probability of observing the given class. However a better one involves using a categorical distribution to model our world. Where $\bm{\lambda}$ is a vector that contains a $\lambda$ for each class.
 
 \begin{equation}
 \label{categoricalDistribution}
@@ -76,23 +69,25 @@ In order to simplify the calculations we are going to minimise the log of the pr
 \begin{align}
 \label{L}
 \L &= - \sum_{i = 1}^{I} log \left[ P(\omega = k | \mathbf{x}, \phi) \right]  + log \left[ Pr(\phi) \right] \nonumber \\
-&= - log \sum_{i = 1}^{I} softmax[a_{n}] + \mathcal{N} \left( 0, I \sigma^{2} \right) \nonumber \\
-&= - log \sum_{i = 1}^{I} ????????? + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
+&= - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
 \end{align}
 
 With gradient and Hessian updates being:
 
 \begin{align}
 \label{L}
-\frac{\delta L}{ \delta \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i} \nonumber \\
-\frac{\delta^{2} L}{ \delta \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) \nonumber \\
+\frac{\delta L}{ \delta \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
+\frac{\delta^{2} L}{ \delta \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
 \end{align}
+
+To make the predictions we evaluate a new sample doing a Laplace approximation and then a Monte Carlo integration
  
 \section{Implementation}
 
 
 \section{Results}
 
+Digits initial phi 2.5 works, 5 or bigger runs on NaN error,  -10 gives NaN too, -1 works
 Digits dataset, with prior 100, initial phi ones
 Elapsed time is 414.619122 seconds.
 Hits: 71.87%
