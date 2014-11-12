@@ -30,12 +30,8 @@ CM50246: Machine Learning and AI}
 \section{Introduction}
  
 Given pictures from the world and been asked to classify them in several groups, we are faced with a problem of multi-class classification.
-One of the options would be to create N one-against-all binary classifiers. Using $x$ to denote our data, $\omega$ to for the world state, and $lambda$ for the probability of observing the given class. However a better one involves using a categorical distribution to model our world. Where $\bm{\lambda}$ is a vector that contains a $\lambda$ for each class.
-
-\begin{equation}
-\label{categoricalDistribution}
-Pr(\omega|\mathbf{x}) = Cat_{w}[\bm{\lambda}[\mathbf{x}]]\,
-\end{equation}
+One of the options would be to create N one-against-all binary classifiers.
+However an approach that handles naturally the multi-class nature is the use of a categorical distribution to model our world. 
 
 \section{The problem}
 
@@ -109,6 +105,16 @@ Prediction Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \mu
 \end{tabular}
 \end{table}
 
-For the \textit{Digits} data set initial $\phi$ vector values smaller than -10 and bigger than 5 would give NaN. 
+For the \textit{Digits} data set initial $\phi$ vector values smaller than -10 and bigger than 5 would give NaN.
+Regarding the prior variance it is clear that a smaller value, so decreasing our confidence in the prior, yields better predictions.
+Thus indicating that our guess of a normal distribution centred at zero is a not too far fetched. On the other hand, there are not significant changes when using different $\phi$ values. 
+Except for 2.5 which gives a decrease in performance, then indicating the existence of a worse local minima in that region.
+%I DONT LIKE THIS PHRASE, CHANGE FOR SAMETHING BETTER 
+
+%Check believe spelling
+While for the \textit{ETH-80} data set, the trend is better accuracy as the prior variance increases.
+Therefore, the the prior believe seems to be mistaken.
+While the initial $\phi$ doesn't seem to affect the end result.
+However if set to zeros it does not converge or it does it quite slowly.
  
 \end{document}
