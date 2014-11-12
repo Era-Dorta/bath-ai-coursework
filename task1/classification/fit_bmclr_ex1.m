@@ -15,7 +15,7 @@ n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
 
 if data_index == 1
-    prior = 10;
+    prior = 1;
     % Pick the first n_train samples for training
     X_train = X(1:n_train, :);
     Y_train = Y(1:n_train);
