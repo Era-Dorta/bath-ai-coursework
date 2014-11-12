@@ -29,22 +29,21 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-Given pictures from the world and been asked to classify them in several groups, we are faced with a problem of multi-class classification.
+Given some pictures objects and having been asked to classify them in several groups, we are faced with a multi-class classification problem.
 One of the options would be to create N one-against-all binary classifiers.
-However an approach that handles naturally the multi-class nature is the use of a categorical distribution to model our world. 
+However an approach that naturally handles the multi-class nature of the problem is to use a categorical distribution to model our world. 
 
 \section{The problem}
 
-As stated in the introduction, we are going to fit a Categorical probability model into our data. 
-Denoting $I$ as the total number of data points that we are given.  
-Then, using Bayes' rule we have:
+As stated in the introduction, we are going to fit a Categorical probability model into our data.
+Using Bayes' rule we have:
 
 \begin{equation}
 \label{bayes}
 Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
 \end{equation}
 
-We need N activation functions to enforce the constrains.
+Assuming the data can be classified using linear functions, N activation functions are needed to enforce the constrains.
 Since we are solving for multi-class classification a logistic sigmoid function as activation will not be valid.
 Therefore a softmax function is used instead for each activation $a_{n}$.
 
