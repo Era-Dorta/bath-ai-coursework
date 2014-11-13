@@ -29,13 +29,14 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-Given some pictures objects and having been asked to classify them in several groups, we are faced with a multi-class classification problem.
+We are given the task to classify some pictures of objects in several groups.
+So, we are faced with a multi-class classification problem.
 One of the options would be to create N one-against-all binary classifiers.
 However an approach that naturally handles the multi-class nature of the problem is to use a categorical distribution to model our world. 
 
 \section{The problem}
 
-As stated in the introduction, we are going to fit a Categorical probability model into our data.
+As stated in the introduction, we are going to fit a categorical probability model to our data.
 Using Bayes' rule we have:
 
 \begin{equation}
@@ -54,7 +55,7 @@ a_{n} &= \phi_{n}^{T}x \\
 \frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
 \end{align}
 
-For the prior we are going to use a Normal distribution with zero mean and $\sigma$ variance.
+For the prior we are going to use a normal distribution with zero mean and $\sigma^{2}$ variance.
 In order to simplify the calculations we are going to minimise the log of the probability, where $y_{in}$ is the softmax expression for class $n$ and data $i$:
 
 \begin{equation}
@@ -62,12 +63,13 @@ In order to simplify the calculations we are going to minimise the log of the pr
 L = - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
 \end{equation}
 
-With gradient and Hessian updates been:
+We will use the gradient and Hessian updates shown below.
 
+%Change for partial
 \begin{align}
 \label{Grad-Hess-Update}
-\frac{\delta L}{ \delta \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
-\frac{\delta^{2} L}{ \delta \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
+\frac{\partial L}{ \partial \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
+\frac{\partial^{2} L}{ \partial \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
 \end{align}
 
 Predictions are calculated through Laplace approximation and Monte Carlo integration.
@@ -80,11 +82,9 @@ predictions = \int y_{in} \mathcal{N}_{a} \left( \mu_{a}, \Sigma_{a} \right) da
 \section{Results}
 
 We tested the classification algorithm with two different datasets.
-The first one consists of hand drawn images of single digits from zero to nine,
-stored as a 28x28 matrix of pixel values.
+The first one consists of hand drawn images of single digits from zero to nine, stored as a 784 vector of pixel values.
 While the second one consists of pictures of eight different objects against a blue background, stored as a 576 vector of pixel values.
-
-Below are the prediction accuracy results using different variances for the normal distribution prior and for several values of the $\phi_{0}$ vector. 
+We present two tables showing prediction accuracy using different variances for the normal distribution prior and for several values of the $\phi_{0}$ vector. 
 
 \begin{table}[h]
 \begin{tabular}{l|lllllll}
@@ -104,19 +104,16 @@ Prediction Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \mu
 \end{tabular}
 \end{table}
 
-For the \textit{Digits} dataset, $\phi_{0}$ vector values smaller than -10 and bigger than 5 would give NaN.
-Regarding the prior variance it is clear that a smaller value, decreasing our confidence in the prior, yields better predictions.
-Thus indicating that normal distribution centred at zero is a reasonable guess.
-On the other hand, there are not significant improvements when using different $\phi_{0}$ values. 
+For the \textit{Digits} dataset is clear that a smaller variance value, yields better predictions.
+Thus indicating that a spiked normal distribution centred at zero is a reasonable guess.
+With respect to the numerical minimization, we do not see significant improvements when using different $\phi_{0}$ values. 
 Except for 2.5 which gives a decrease in performance, then indicating the existence of a worse local minima in that region.
 
-%Check believe spelling
+%Check believe spelling, the same as the one above
 While for the \textit{ETH-80} dataset, the trend is better accuracy as the variance increases.
 Therefore the prior believe must be erroneous.
-On the other hand, $\phi_{0}$ does not seem to affect the end result.
-However if set to zeros it does not converge or at least it does so quite slowly.
+The effect of the initial guess for $\phi$ does not seem to affect the end result.
+However, if set to zeros it does not converge or at least it does so quite slowly.
 Which could be an indicator of a valley where the gradient is zigzagging.
-
-% Add conclution 
  
 \end{document}
