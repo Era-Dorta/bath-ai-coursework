@@ -7,7 +7,7 @@ function hits = fit_bmclr_ex1(data_index, data_path, prior, initial_phi_val)
     n_test = size(testIndices, 1);
     
     D1 = size(X,2) + 1;
-    initial_phi = ones(D1*num_classes, 1) * initial_phi_val;
+    initial_phi = zeros(D1*num_classes, 1) + initial_phi_val;
 
     if data_index == 1
         % Pick the first n_train samples for training
