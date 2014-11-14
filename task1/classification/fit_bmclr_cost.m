@@ -99,5 +99,4 @@ function [L, g, H] = fit_bmclr_cost (phi, X, w, prior, num_classes)
 
     %% Assemble using built in functions
     H = cell2mat(HH);
-    disp(L);
 end
