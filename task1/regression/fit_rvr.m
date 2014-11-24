@@ -49,14 +49,16 @@ function [mu_test, var_test, relevant_points] = ...
         % Constrain var to be positive, by expressing it as
         % var=sqrt(var)^2, that is, the standard deviation squared.
         mu_world = sum(w) / I;
+        %8.56
         var_world = sum((w - mu_world) .^ 2) / I;
         var = fminbnd (@(var) fit_rvr_cost (var, K, w, H), 0, var_world);
         
         % Update sig and mu.
         sig = inv (K_K/var + diag(H));
         mu = sig*K_w/var;
+        %Equation 8.57
         
-        % Update H.
+        % Update H, equation 8.55
         H = H .* diag(sig);
         H = nu + 1 - H;
         H = H ./ (mu.^2 + nu);
