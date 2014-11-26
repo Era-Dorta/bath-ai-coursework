@@ -24,6 +24,7 @@ function [mu_test, var_test, relevant_points] = ...
          fit_rvr (X, w, nu, X_test, kernel)
     I = size(X,2);
     I_test = size(X_test,2);
+    D = size(X, 1) - 1;
     
     % Compute K[X,X].    
     K = zeros(I,I);
@@ -42,44 +43,57 @@ function [mu_test, var_test, relevant_points] = ...
     K_w = K*w;
     
     % The main loop.
-    %iterations_count = 0;
+    iterations_count = 0;
     precision = 0.001;
+    
+    var = zeros(D, 1);
     while true
         % Compute the variance. Use the range [0,variance of world values].
         % Constrain var to be positive, by expressing it as
         % var=sqrt(var)^2, that is, the standard deviation squared.
         %8.56
-        mu_world = sum(w) / I;
-        var_world = sum((w - mu_world) .^ 2) / I;
-        var = fminbnd (@(var) fit_rvr_cost (var, K, w, H), 0, var_world);
+        for i=1:D
+            mu_world = sum(w(:,i)) / I;
+            var_world = sum((w(:,i) - mu_world) .^ 2) / I;
+            var(i) = fminbnd (@(var) fit_rvr_cost (var, K, w(:,i), H), 0, var_world);
+
+            %Equation 8.57
+            % Update sig and mu.
+            sig = inv (K_K/var(i) + diag(H));
+            mu = sig*K_w(:,i)/var(i);
+            
+            % Update H, equation 8.55
+            H = H .* diag(sig);
+            H = nu + 1 - H;
+            H = H ./ (mu.^2 + nu);
+                       
+            %iterations_count = iterations_count + 1;        
+            %disp(['iteration ' num2str(iterations_count)]);
+            %disp(H);
+            stop = all(abs(H-H_old) < precision);
+            if stop == true
+                break;
+            end
+
+            % Save H for the next iteration.
+            H_old = H;
+        end 
         
-        %Equation 8.57
-        % Update sig and mu.
-        sig = inv (K_K/var + diag(H));
-        mu = sig*K_w/var;
-                
-        % Update H, equation 8.55
-        H = H .* diag(sig);
-        H = nu + 1 - H;
-        H = H ./ (mu.^2 + nu);
-                
-        %iterations_count = iterations_count + 1;        
-        %disp(['iteration ' num2str(iterations_count)]);
-        %disp(H);
-        stop = all(abs(H-H_old) < precision);
-        if stop == true
+        iterations_count = iterations_count + 1;        
+        disp(['iteration ' num2str(iterations_count)]);
+        
+        if stop == true || iterations_count == 1
             break;
         end
-        
-        % Save H for the next iteration.
-        H_old = H;
     end
+    
+    disp(H);
     
     % Prune step. Remove column t in X, row t in w, and element t in H,
     % if H(t) > 1.
-    selector = H < 1;
+    selector = H < 3;
     X = X(:,selector);
-    w = w(selector);
+    w = w(selector, :);
     H = H(selector);
     relevant_points = selector;
     
@@ -100,16 +114,18 @@ function [mu_test, var_test, relevant_points] = ...
         end
     end
     
-    % Compute A_inv.
-    A_inv = inv (K*K/var + diag(H));
+    for i=1:D
+        % Compute A_inv.
+        A_inv = inv (K*K/var(i) + diag(H));
         
-    % Compute the mean for each test example.
-    temp = K_test*A_inv;
-    mu_test = temp*K*w/var;
-    
-    % Compute the variance for each test example.    
-    var_test = repmat(var,I_test,1);
-    for i = 1 : I_test
-        var_test(i) = var_test(i) + temp(i,:)*K_test(i,:)';
-    end    
+        % Compute the mean for each test example.
+        temp = K_test*A_inv;
+        mu_test(:,i) = temp*K*w(:,i)/var(i);
+        
+        % Compute the variance for each test example.
+        var_test2 = repmat(var(i),I_test,1);
+        for j = 1 : I_test
+            var_test(i,j) = var_test2(j) + temp(j,:)*K_test(j,:)';
+        end
+    end
 end

@@ -28,6 +28,12 @@ kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, 2);
 
 Y_test = Y(testIndices, :);
 
+for i=1:n_test
+    figure;
+    plotCharacter(Y(testIndices(i), :), 'b-');
+    plotCharacter(mu_test(i, :), 'r-');
+end
+
 % figure;
 % for i=1:size(X, 1)
 %     plotCharacter(X(i, :), strcat(colors(i),'-'));
