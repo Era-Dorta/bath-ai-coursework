@@ -82,7 +82,7 @@ function [mu_test, var_test, relevant_points] = ...
         iterations_count = iterations_count + 1;        
         disp(['iteration ' num2str(iterations_count)]);
         
-        if stop == true || iterations_count == 1
+        if stop == true || iterations_count == 10
             break;
         end
     end
