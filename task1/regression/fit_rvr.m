@@ -35,8 +35,8 @@ function [mu_test, var_test, relevant_points] = ...
     end
     
     % Initialize H.
-    H = ones(I,1);
-    H_old = zeros(I,1);
+    H = ones(I,D);
+    H_old = zeros(I,D);
         
     % Pre-compute so that it is not computed each iteration.
     K_K = K*K;
@@ -55,46 +55,46 @@ function [mu_test, var_test, relevant_points] = ...
         for i=1:D
             mu_world = sum(w(:,i)) / I;
             var_world = sum((w(:,i) - mu_world) .^ 2) / I;
-            var(i) = fminbnd (@(var) fit_rvr_cost (var, K, w(:,i), H), 0, var_world);
+            var(i) = fminbnd (@(var) fit_rvr_cost (var, K, w(:,i), H(:,i)), 0, var_world);
 
             %Equation 8.57
             % Update sig and mu.
-            sig = inv (K_K/var(i) + diag(H));
+            sig = inv (K_K/var(i) + diag(H(:,i)));
             mu = sig*K_w(:,i)/var(i);
             
             % Update H, equation 8.55
-            H = H .* diag(sig);
-            H = nu + 1 - H;
-            H = H ./ (mu.^2 + nu);
+            H(:,i) = H(:,i) .* diag(sig);
+            H(:,i) = nu + 1 - H(:,i);
+            H(:,i) = H(:,i) ./ (mu.^2 + nu);
                        
-            %iterations_count = iterations_count + 1;        
-            %disp(['iteration ' num2str(iterations_count)]);
-            %disp(H);
-            stop = all(abs(H-H_old) < precision);
+            stop = all(abs(H(:,i)-H_old(:,i)) < precision);
             if stop == true
                 break;
             end
 
             % Save H for the next iteration.
-            H_old = H;
+            H_old(:,i) = H(:,i);
         end 
         
         iterations_count = iterations_count + 1;        
         disp(['iteration ' num2str(iterations_count)]);
         
-        if stop == true || iterations_count == 10
+        if stop == true
             break;
         end
     end
     
-    disp(H);
+    %Calculate the mean for all dimension in each sample
+    H_sum = sum(H, 2) * 1/D;
+    disp(H_sum);
     
     % Prune step. Remove column t in X, row t in w, and element t in H,
     % if H(t) > 1.
-    selector = H < 3;
+    
+    selector = H_sum < 50;
     X = X(:,selector);
     w = w(selector, :);
-    H = H(selector);
+    H = H(selector, :);
     relevant_points = selector;
     
     % Recompute K[X,X].
@@ -116,7 +116,7 @@ function [mu_test, var_test, relevant_points] = ...
     
     for i=1:D
         % Compute A_inv.
-        A_inv = inv (K*K/var(i) + diag(H));
+        A_inv = inv (K*K/var(i) + diag(H(:,i)));
         
         % Compute the mean for each test example.
         temp = K_test*A_inv;

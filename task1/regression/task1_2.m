@@ -22,7 +22,18 @@ kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, 2);
 
 %% Fit model
 
+do_profile = 0;
+
+if do_profile
+    profile on;
+end
+
 [mu_test, var_test, relevant] = fit_rvr (X_train, w, nu, X_test, kernel);
+
+if do_profile
+    profile off;
+    profile viewer;
+end
 
 %% Check predictions
 
