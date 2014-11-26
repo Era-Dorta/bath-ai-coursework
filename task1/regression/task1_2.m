@@ -30,6 +30,10 @@ end
 
 [mu_test, var_test, relevant] = fit_rvr (X_train, w, nu, X_test, kernel);
 
+num_relevant = sum(relevant);
+
+fprintf('Using %d relevance vectors\n', num_relevant);
+
 if do_profile
     profile off;
     profile viewer;

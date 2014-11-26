@@ -86,7 +86,7 @@ function [mu_test, var_test, relevant_points] = ...
     
     %Calculate the mean for all dimension in each sample
     H_sum = sum(H, 2) * 1/D;
-    disp(H_sum);
+    %disp(H_sum);
     
     % Prune step. Remove column t in X, row t in w, and element t in H,
     % if H(t) > 1.
