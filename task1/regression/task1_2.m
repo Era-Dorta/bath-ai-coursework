@@ -30,6 +30,8 @@ end
 
 [mu_test, var_test, relevant] = fit_rvr (X_train, w, nu, X_test, kernel);
 
+var_test = var_test';
+
 num_relevant = sum(relevant);
 
 fprintf('Using %d relevance vectors\n', num_relevant);
@@ -43,10 +45,12 @@ end
 
 Y_test = Y(testIndices, :);
 
+figure;
 for i=1:n_test
-    figure;
+    subplot(1, 3, i);
     plotCharacter(Y(testIndices(i), :), 'b-');
     plotCharacter(mu_test(i, :), 'r-');
+    plotCharacter(mu_test(i, :) + var_test(i, :) * 1000 , 'y-');
 end
 
 % figure;
