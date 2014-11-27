@@ -20,7 +20,12 @@ w = Y(trainingIndices,:);
 %nu = 0.0005;
 
 % 9 vectors
-nu = 0.005;
+%nu = 0.005;
+
+% 5 vectors
+nu = 0.001;
+
+plotDev = 0;
 
 kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, 2);
 
@@ -48,20 +53,28 @@ end
 %% Check predictions
 
 Y_test = Y(testIndices, :);
-
-figure;
 for i=1:n_test
-    subplot(1, 3, i);
+    figure;
     plotCharacter(Y(testIndices(i), :), 'b-');
     mu_test(i,:) = norm(Y_test(i,:))* mu_test(i,:) / norm(mu_test(i,:));
+    var_test(i,:) = norm(Y_test(i,:))* var_test(i,:) / norm(mu_test(i,:));
     plotCharacter(mu_test(i, :), 'r-');
+    if plotDev
+        standardDeviation = var_test(i,:).^0.5;
+        varMax = max(mu_test(i, :) + 2*standardDeviation,mu_test(i, :) - 2*standardDeviation);
+        varMin = min(mu_test(i, :) + 2*standardDeviation,mu_test(i, :) - 2*standardDeviation);
+        plotCharacter(varMax, 'k.');
+        plotCharacter(varMin, 'k.');
+    end
+    title(strcat('Nu = ',num2str(nu)));
 end
+
 
 % figure;
 % for i=1:size(X, 1)
 %     plotCharacter(X(i, :), strcat(colors(i),'-'));
 % end
-% 
+%
 % figure;
 % for i=1:size(X, 1)
 %     plotCharacter(Y(i, :), strcat(colors(i),'-'));
