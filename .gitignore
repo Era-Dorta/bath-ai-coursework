@@ -7,4 +7,5 @@ task1/classification/results
 *.blg
 *.synctex.gz
 *.bbl
+*.asv
 *~
