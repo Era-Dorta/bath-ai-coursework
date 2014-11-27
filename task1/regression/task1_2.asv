@@ -50,6 +50,8 @@ for i=1:n_test
     subplot(1, 3, i);
     plotCharacter(Y(testIndices(i), :), 'b-');
     plotCharacter(mu_test(i, :), 'r-');
+%     norm_mu_test = mu_test(i, :)/norm(mu_test(i, :));
+%     plotCharacter(mu_test(i, :) + (sqrt(var_test(i, :)) * 1000) , 'y-');
 end
 
 % figure;
