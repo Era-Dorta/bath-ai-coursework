@@ -49,6 +49,7 @@ figure;
 for i=1:n_test
     subplot(1, 3, i);
     plotCharacter(Y(testIndices(i), :), 'b-');
+    mu_test(i,:) = norm(Y_test(i,:))* mu_test(i,:) / norm(mu_test(i,:));
     plotCharacter(mu_test(i, :), 'r-');
 end
 
