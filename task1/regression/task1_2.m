@@ -16,7 +16,11 @@ colors = ['b','g','r','c','m','y','k', 'b','g','r','c','m','y','k'];
 
 w = Y(trainingIndices,:);
 
-nu = 0.0005;
+% 3 vectors
+%nu = 0.0005;
+
+% 9 vectors
+nu = 0.005;
 
 kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, 2);
 
