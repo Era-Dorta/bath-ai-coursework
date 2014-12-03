@@ -66,22 +66,21 @@ function [mu_test, var_test, relevant_points] = ...
             H(:,i) = H(:,i) .* diag(sig);
             H(:,i) = nu + 1 - H(:,i);
             H(:,i) = H(:,i) ./ (mu.^2 + nu);
-                       
-            stop = all(abs(H(:,i)-H_old(:,i)) < precision);
-            if stop == true
-                break;
-            end
-
-            % Save H for the next iteration.
-            H_old(:,i) = H(:,i);
         end 
         
         iterations_count = iterations_count + 1;        
-        disp(['iteration ' num2str(iterations_count)]);
+        disp(['iteration ' num2str(iterations_count)]);    
         
-        if stop == true
+        current_precision = mean(mean(abs(H-H_old)));
+        disp(current_precision);
+        
+        %stop = all(abs(H-H_old) < precision);
+        if current_precision < precision
             break;
         end
+
+        % Save H for the next iteration.
+        H_old = H;
     end
     
     %Calculate the mean for all dimension in each sample
