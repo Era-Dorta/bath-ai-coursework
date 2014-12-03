@@ -20,14 +20,17 @@ w = Y(trainingIndices,:);
 %nu = 0.0005;
 
 % 9 vectors
-%nu = 0.005;
+nu = 0.005;
 
 % 5 vectors
-nu = 0.001;
+%nu = 0.001;
+
+lambda = 2;
 
 plotDev = 0;
+plotNormalized = 0;
 
-kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, 2);
+kernel = @(x_i, x_j) kernel_gauss (x_i, x_j, lambda);
 
 %% Fit model
 
@@ -56,8 +59,10 @@ Y_test = Y(testIndices, :);
 for i=1:n_test
     figure;
     plotCharacter(Y(testIndices(i), :), 'b-');
-    mu_test(i,:) = norm(Y_test(i,:))* mu_test(i,:) / norm(mu_test(i,:));
-    var_test(i,:) = norm(Y_test(i,:))* var_test(i,:) / norm(mu_test(i,:));
+    if plotNormalized
+        mu_test(i,:) = norm(Y_test(i,:))* mu_test(i,:) / norm(mu_test(i,:));
+        var_test(i,:) = norm(Y_test(i,:))* var_test(i,:) / norm(mu_test(i,:));
+    end
     plotCharacter(mu_test(i, :), 'r-');
     if plotDev
         standardDeviation = var_test(i,:).^0.5;
