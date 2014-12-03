@@ -74,8 +74,9 @@ function [mu_test, var_test, relevant_points] = ...
         current_precision = mean(mean(abs(H-H_old)));
         disp(current_precision);
         
+        stop = current_precision < precision;
         %stop = all(abs(H-H_old) < precision);
-        if current_precision < precision
+        if stop
             break;
         end
 
@@ -83,6 +84,8 @@ function [mu_test, var_test, relevant_points] = ...
         H_old = H;
     end
     
+    fprintf('H total values %d, H smaller than precision %d\n', ...
+        size(H,1)*size(H,2), sum(sum(abs(H-H_old) < precision)));
     %Calculate the mean for all dimension in each sample
     H_sum = sum(H, 2) * 1/D;
     %disp(H_sum);
