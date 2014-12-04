@@ -4,7 +4,7 @@ close all;
 
 %% Load data
 
-load('../data/Fonts_n_to_m.mat');
+load('../../data/Fonts_n_to_m.mat');
 
 n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
@@ -17,10 +17,10 @@ colors = ['b','g','r','c','m','y','k', 'b','g','r','c','m','y','k'];
 w = Y(trainingIndices,:);
 
 % 3 vectors
-%nu = 0.0005;
+nu = 0.0005;
 
 % 9 vectors
-nu = 0.005;
+%nu = 0.005;
 
 % 5 vectors
 %nu = 0.001;
@@ -40,7 +40,9 @@ if do_profile
     profile on;
 end
 
-[mu_test, var_test, relevant] = fit_rvr (X_train, w, nu, X_test, kernel);
+% [mu_test, var_test, relevant] = fit_rvr (X_train, w, nu, X_test, kernel);
+
+[mu_test, var_test, relevant] = fit_rvr_sameH (X_train, w, nu, X_test, kernel);
 
 var_test = var_test';
 
