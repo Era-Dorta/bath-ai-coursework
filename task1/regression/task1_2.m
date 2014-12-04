@@ -17,13 +17,13 @@ colors = ['b','g','r','c','m','y','k', 'b','g','r','c','m','y','k'];
 w = Y(trainingIndices,:);
 
 % 3 vectors
-nu = 0.0005;
+%nu = 0.0005;
 
 % 9 vectors
 %nu = 0.005;
 
 % 5 vectors
-%nu = 0.001;
+nu = 0.001;
 
 lambda = 2;
 
@@ -76,7 +76,13 @@ for i=1:n_test
     title(strcat('Nu = ',num2str(nu)));
 end
 
-
+xRelevant = X(trainingIndices(find(relevant > 0)),:);
+figure;
+for i = 1:num_relevant
+    subplot(1,3,i);
+    hold on;
+    plotCharacter(xRelevant(i,:), 'b-');
+end
 % figure;
 % for i=1:size(X, 1)
 %     plotCharacter(X(i, :), strcat(colors(i),'-'));

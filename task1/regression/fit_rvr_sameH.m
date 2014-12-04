@@ -35,7 +35,7 @@ for i=1:I
 end
 
 % Initialize H.
-H = ones(I,1);
+H = nu*ones(I,1);
 H_old = zeros(I,1);
 
 % Pre-compute so that it is not computed each iteration.
@@ -45,7 +45,7 @@ K_w = K*w;
 % The main loop.
 iterations_count = 0;
 precision = 1e-5;
-min_H = ones(I,1);
+min_H = H;
 min_Cost = 0;
 minCount = 0;
 maxCount = 15;
@@ -72,13 +72,13 @@ while true
         
     end
     
-    hFunc = @(H_In) evalCostSameH(var,K,w,H_In,D);
-    H = fminsearch(hFunc,H,optimset('Display','final','MaxIter',50));
+    hFunc = @(H_In) evalCostSameH(var,K,w,H_In,D,nu);
+    H = fminsearch(hFunc,H,optimset('Display','iter','MaxIter',40));
     
     iterations_count = iterations_count + 1;
     disp(['iteration ' num2str(iterations_count)]);
     
-    testCost = evalCostSameH(var, K, w, H, D);
+    testCost = evalCostSameH(var, K, w, H, D,nu);
     disp(['Current Cost: ' num2str(testCost)]);
     if ~firstLoop && (min_Cost == 0 || testCost < min_Cost)
         min_Cost = testCost;
@@ -119,7 +119,7 @@ assignin('base','H',H);
 % Prune step. Remove column t in X, row t in w, and element t in H,
 % if H(t) > Some Threshold.
 
-selector = H < 1000;
+[disregard, selector] = getNElements(H,5);
 X = X(:,selector);
 w = w(selector, :);
 H = H(selector, :);
