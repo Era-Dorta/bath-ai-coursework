@@ -4,7 +4,7 @@ close all;
 
 %% Load data
 
-load('../../data/Fonts_n_to_m.mat');
+load('../data/Fonts_n_to_m.mat');
 
 n_train = size(trainingIndices, 1);
 n_test = size(testIndices, 1);
