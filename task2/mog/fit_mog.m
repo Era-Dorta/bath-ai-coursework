@@ -28,6 +28,7 @@ function [lambda, mu, sig] = fit_mog (x, K, precision)
         mat = mat' * mat;
         dataset_variance = dataset_variance + mat;
     end
+    %Make sure matrix in positive definite and simetric
     dataset_variance = dataset_variance ./ I;
     for i = 1 : K
         sig{i} = dataset_variance;
@@ -72,6 +73,7 @@ function [lambda, mu, sig] = fit_mog (x, K, precision)
                 mat = r(i,k) * (mat' * mat);
                 new_sigma = new_sigma + mat;
             end
+            %Make sure matrix in positive definite and simetric
             sig{k} = new_sigma ./ r_summed_rows(k);
         end
         
