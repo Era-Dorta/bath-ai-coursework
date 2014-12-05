@@ -8,7 +8,7 @@
 %        lambda  - lambda(k) is the weight for the k-th Gaussian.
 %        mu      - mu(k,:) is the mean for the k-th Gaussian.
 %        sig     - sig{k} is the covariance matriX for the k-th Gaussian.
-function [lambda, mu, sig] = fit_mog (X, K, precision)
+function [lambda, mu, sig, r] = fit_mog (X, K, precision)
     %% Initialization
     % Initialize all values in lambda to 1/K.
     lambda = repmat (1/K, K, 1);
@@ -32,7 +32,7 @@ function [lambda, mu, sig] = fit_mog (X, K, precision)
     dataset_variance = dataset_variance ./ I;
     
     %Make sure matrix in positive definite and simetric
-    dataset_variance = dataset_variance + 1e-8 * eye(dimensionality);
+    dataset_variance = dataset_variance + 0.1 * eye(dimensionality);
     for i = 1 : K
         sig{i} = dataset_variance;
     end
@@ -78,7 +78,7 @@ function [lambda, mu, sig] = fit_mog (X, K, precision)
                 new_sigma = new_sigma + mat;
             end
             %Make sure matrix in positive definite and simetric            
-            sig{k} = new_sigma ./ r_summed_rows(k) + 1e-8 * eye(dimensionality);
+            sig{k} = new_sigma ./ r_summed_rows(k) + 0.1 * eye(dimensionality);
         end
         
         % Compute the log likelihood L.
