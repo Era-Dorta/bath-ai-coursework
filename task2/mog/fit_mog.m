@@ -8,7 +8,11 @@
 %        lambda  - lambda(k) is the weight for the k-th Gaussian.
 %        mu      - mu(k,:) is the mean for the k-th Gaussian.
 %        sig     - sig{k} is the covariance matriX for the k-th Gaussian.
-function [lambda, mu, sig] = fit_mog (X, K, precision)
+function [lambda, mu, sig] = fit_mog (X, K, precision, testmode)
+    if ~exist('testmode', 'var')
+        testmode = 0;
+    end
+    
     %% Initialization
     % Initialize all values in lambda to 1/K.
     lambda = repmat (1/K, K, 1);
@@ -32,7 +36,7 @@ function [lambda, mu, sig] = fit_mog (X, K, precision)
     dataset_variance = dataset_variance ./ I;
     
     %Make sure matrix in positive definite and simetric
-    dataset_variance = dataset_variance + 1e-8 * eye(dimensionality);
+    dataset_variance = dataset_variance + 1e-1 * eye(dimensionality);
     for i = 1 : K
         sig{i} = dataset_variance;
     end
@@ -47,7 +51,19 @@ function [lambda, mu, sig] = fit_mog (X, K, precision)
         r = zeros (I,K);
         % Compute the numerator of Bayes' rule.
         for k = 1 : K
-            l(:,k) = lambda(k) * mvnpdf (X, mu(k,:), sig{k});
+            twopik = ((2 * pi) ^ (-K/2));
+            detsig = det(sig{k});
+            sigsqrt = 1/sqrt(detsig);
+            % X - mu
+            xmukt = bsxfun(@minus, X, mu(k,:));
+            invsig = inv(sig{k});
+            
+            mymvnpdf = diag(twopik * sigsqrt * exp(-0.5 * xmukt * invsig * xmukt'));
+            l(:,k) = lambda(k) * mymvnpdf;
+            
+            if testmode
+                assert(sum(abs(mymvnpdf - mvnpdf (X, mu(k,:), sig{k})) < 1e-6) > 0, 'Mvnpdf calculation error');
+            end
         end
         
         % Compute the responsibilities by normalizing.

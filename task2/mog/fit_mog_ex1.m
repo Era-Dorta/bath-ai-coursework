@@ -4,6 +4,8 @@ close all;
 
 %% Load data
 
+testmode = 1;
+
 data_path = {'data/MNIST_Data.mat', 'data/ETH-80_HoG_Data.mat'};
 data_index = 1;
 
@@ -20,5 +22,5 @@ if data_index == 1
 end
 
 %% Fit MoG using our function fit_mog.
-[lambda, mu, sig] = fit_mog (X(1:10,:), num_classes, precision);
+[lambda, mu, sig] = fit_mog (X, num_classes, precision, testmode);
 
