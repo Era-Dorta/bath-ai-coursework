@@ -2,8 +2,10 @@ function [ cluster_mu, cluster_assig ] = kmeans( X, K )
     dimensionality = size(X, 2);
     I = size(X, 1);
 
+    % Compute overall mean
     overall_mu = sum(X) / I;
     
+    % Compute overall covariance
     overall_covar = zeros (dimensionality, dimensionality);
     for i = 1 : I
         mat = X (i,:) - overall_mu;
