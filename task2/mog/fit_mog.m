@@ -12,12 +12,19 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
     %% Initialization
     % Initialize all values in lambda to 1/K.
     lambda = repmat (1/K, K, 1);
+    
+    I = size (X, 1);
 
     % Initialize the values in mu to K randomly chosen unique datapoints.
-    I = size (X, 1);
-    K_random_unique_integers = randperm(I);
-    K_random_unique_integers = K_random_unique_integers(1:K);
-    mu = X (K_random_unique_integers,:);
+%     K_random_unique_integers = randperm(I);
+%     K_random_unique_integers = K_random_unique_integers(1:K);
+%     mu = X (K_random_unique_integers,:);
+
+    % Initialize the values of mu using the kmeans result
+    [mu, assignm] = kmeans(X,K);
+    while length(unique(assignm)) < K
+        [mu, assignm] = kmeans(X,K);
+    end; 
 
     % Initialize the variances in sig to the variance of the dataset.
     sig = cell (1, K);
@@ -92,7 +99,7 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
         %disp(L);
  
         iterations = iterations + 1;        
-        %disp([num2str(iterations) ': ' num2str(L)]);
+        disp([num2str(iterations) ': ' num2str(L)]);
         if abs(L - previous_L) < precision
             %msg = [num2str(iterations) ' iterations, log-likelihood = ', ...
                 %num2str(L)];
