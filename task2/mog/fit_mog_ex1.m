@@ -17,11 +17,19 @@ rng('default');
 %Y = Y(1:100);
 
 num_data = size(X, 1);
+% Number of classes in our data 
 num_classes_test = length(unique(Y));
-num_classes = 10;
+
+% Number of gaussians used for the data
+if data_index == 1
+    num_classes = 10;
+else
+    num_classes = 8;
+end
+
 precision = 0.01;
 
-if data_index == 1    
+if data_index == 1
     % The class index in this data set starts at zero, increment for
     % matlab indexing
     Y = Y + 1;
@@ -29,7 +37,6 @@ end
 
 %% Fit MoG using our function fit_mog.
 [lambda, mu, sig, r] = fit_mog (X, num_classes, precision);
-
 
 %% Check accuracy
 [~, predictions_class] = max(r');
@@ -42,7 +49,7 @@ for i=1:num_data
     gaussians_class_vote(predictions_class(i), Y(i)) = gaussians_class_vote(predictions_class(i), Y(i)) + 1;
 end
 
-% Gaussian will classify the class with max votes
+% Gaussian will be associated with the class with max votes
 [~, gaussian_real_class] = max(gaussians_class_vote');
 
 % Subsititute the gaussian number for class number
