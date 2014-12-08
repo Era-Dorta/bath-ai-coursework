@@ -10,21 +10,22 @@
 %        sig     - sig{k} is the covariance matriX for the k-th Gaussian.
 function [lambda, mu, sig, r] = fit_mog (X, K, precision)
     test = 0; 
+    % This avoids positive definite errors
+    extra_variance = 0.05;
+    
     %% Initialization
     % Initialize all values in lambda to 1/K.
     lambda = repmat (1/K, K, 1);
     
     I = size (X, 1);
 
-    % Initialize the values in mu to K randomly chosen unique datapoints.
-%     K_random_unique_integers = randperm(I);
-%     K_random_unique_integers = K_random_unique_integers(1:K);
-%     mu = X (K_random_unique_integers,:);
-
     % Initialize the values of mu using the kmeans result
     [mu, assignm] = kmeans(X,K);
+    iterations = 1;  
     while length(unique(assignm)) < K
+        fprintf('kmeans %d iteration\n', iterations);
         [mu, assignm] = kmeans(X,K);
+        iterations = iterations + 1;
     end; 
 
     % Initialize the variances in sig to the variance of the dataset.
@@ -40,7 +41,7 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
     dataset_variance = dataset_variance ./ I;
     
     %Make sure matrix in positive definite and simetric
-    dataset_variance = dataset_variance + 0.1 * eye(dimensionality);
+    dataset_variance = dataset_variance + extra_variance * eye(dimensionality);
     for i = 1 : K
         sig{i} = dataset_variance;
     end
@@ -100,7 +101,7 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
                 assert(same, 'Error on update sigma vectorized');
             end
             %Make sure matrix in positive definite and simetric            
-            sig{k} = new_sigma ./ r_summed_rows(k) + 0.1 * eye(dimensionality);
+            sig{k} = new_sigma ./ r_summed_rows(k) + extra_variance * eye(dimensionality);
         end
         
         % Compute the log likelihood L.
