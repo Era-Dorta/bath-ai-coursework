@@ -9,6 +9,7 @@
 %        mu      - mu(k,:) is the mean for the k-th Gaussian.
 %        sig     - sig{k} is the covariance matriX for the k-th Gaussian.
 function [lambda, mu, sig, r] = fit_mog (X, K, precision)
+    test = 0; 
     %% Initialization
     % Initialize all values in lambda to 1/K.
     lambda = repmat (1/K, K, 1);
@@ -78,11 +79,25 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
             mu(k,:) = new_mu ./ r_summed_rows(k);
 
             % Update sigma.
-            new_sigma = zeros (dimensionality,dimensionality);
-            for i = 1 : I
-                mat = X(i,:) - mu(k,:);
-                mat = r(i,k) * (mat' * mat);
-                new_sigma = new_sigma + mat;
+            if test
+                new_sigma_old = zeros (dimensionality,dimensionality);
+                for i = 1 : I
+                    mat = X(i,:) - mu(k,:);
+                    mat = r(i,k) * (mat' * mat);
+                    new_sigma_old = new_sigma_old + mat;
+                end
+            end
+            
+            % Vectorized version of new sigma calculation
+            x_minus_mu = bsxfun(@minus, X, mu(k,:));
+            x_by_r = bsxfun(@times, x_minus_mu', r(:,k)');
+            new_sigma = x_by_r * x_minus_mu;
+            
+            if test
+                absTol = 1e-3;   %Tolerance factor
+                absError = new_sigma(:)-new_sigma_old(:);
+                same = all( (abs(absError) < absTol) );
+                assert(same, 'Error on update sigma vectorized');
             end
             %Make sure matrix in positive definite and simetric            
             sig{k} = new_sigma ./ r_summed_rows(k) + 0.1 * eye(dimensionality);
