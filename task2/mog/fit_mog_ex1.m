@@ -39,8 +39,24 @@ for i=1:num_data
     gaussians_class_vote(predictions_class(i), Y(i)) = gaussians_class_vote(predictions_class(i), Y(i)) + 1;
 end
 
+% Transform votes to probabilities
+gaussians_class_vote_norm = bsxfun(@rdivide, gaussians_class_vote, sum(gaussians_class_vote)); 
+
 % Gaussian will classify the class with max votes
-[~, gaussian_real_class] = max(gaussians_class_vote');
+%[~, gaussian_real_class] = max(gaussians_class_vote_norm');
+
+class_index = 1:num_classes_test;
+gaussian_index = 1:num_classes;
+gaussian_real_class = zeros(1, num_classes);
+gaussians_class_vote_norm1 = gaussians_class_vote_norm;
+for i=1:num_classes
+    % Get the gaussian with the maximum probability for these class
+    [~, gaussian_real_class(i)] = max(gaussians_class_vote_norm(gaussian_index, i));
+    
+    % Set the probability to zero so these Gaussian does not get picked
+    % again
+    gaussians_class_vote_norm(gaussian_real_class(i),:) = 0;
+end
 
 % Subsititute the gaussian number for class number
 predictions_class = arrayfun(@(x) gaussian_real_class(x), predictions_class);
