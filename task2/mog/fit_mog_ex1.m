@@ -9,6 +9,9 @@ data_index = 1;
 
 load(data_path{data_index});
 
+% Set random seed for reapitable results
+rng('default');
+
 %Uncomment to work with less data
 %X = X(1:100, :);
 %Y = Y(1:100);
