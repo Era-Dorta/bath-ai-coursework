@@ -21,7 +21,7 @@
 
 \begin{document}
   
-\title{Task 1.1. Supervised Learning: Standard Classifier}
+\title{Task 3. Relevance Vector Machine}
 \author{Garoe Dorta-Perez\\
 CM50246: Machine Learning and AI}
  
@@ -29,19 +29,19 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-We are given the task to classify some pictures of objects in several groups.
-So, we are faced with a multi-class classification problem.
-One of the options would be to create N one-against-all binary classifiers.
-However an approach that naturally handles the multi-class nature of the problem is to use a categorical distribution to model our world. 
+SVM  are a quite popular choice in classification problems.
+However they are inherently not probabilistic.
+A technique that uses the same intuition is the Relevance Vector Machine.
+It uses a full Bayesian approach with a prior that encourages sparseness.
 
 \section{The problem}
 
-As stated in the introduction, we are going to fit a categorical probability model to our data.
-Using Bayes' rule we have:
+Using the dual parameters $\psi$, we encourage sparsernes in the model by using the prior defined in Equation \ref{prior}.
+Where $I$ is the number of data points, Stud is the Student's t distribution with $v$ degrees of freedom.
 
 \begin{equation}
-\label{bayes}
-Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
+\label{prior}
+Pr(\psi) = \prod_{i = 1}^{I} Stud_{\psi_i} [0, 1, v] \,
 \end{equation}
 
 Assuming the data can be classified using linear functions, N activations are needed to enforce the constrains.
