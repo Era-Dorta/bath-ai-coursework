@@ -40,7 +40,8 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
     end
     dataset_variance = dataset_variance ./ I;
     
-    %Make sure matrix in positive definite and simetric
+    % Add extra offset in the diagonal to force the matrix to be positive 
+    % definite
     dataset_variance = dataset_variance + extra_variance * eye(dimensionality);
     for i = 1 : K
         sig{i} = dataset_variance;
@@ -100,7 +101,8 @@ function [lambda, mu, sig, r] = fit_mog (X, K, precision)
                 same = all( (abs(absError) < absTol) );
                 assert(same, 'Error on update sigma vectorized');
             end
-            %Make sure matrix in positive definite and simetric            
+            % Add extra offset in the diagonal to force the matrix to be positive 
+            % definite          
             sig{k} = new_sigma ./ r_summed_rows(k) + extra_variance * eye(dimensionality);
         end
         
