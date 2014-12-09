@@ -1,0 +1,119 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,bm}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+\begin{document}
+  
+\title{Task 1.1. Supervised Learning: Standard Classifier}
+\author{Garoe Dorta-Perez\\
+CM50246: Machine Learning and AI}
+ 
+\maketitle
+ 
+\section{Introduction}
+ 
+We are given the task to classify some pictures of objects in several groups.
+So, we are faced with a multi-class classification problem.
+One of the options would be to create N one-against-all binary classifiers.
+However an approach that naturally handles the multi-class nature of the problem is to use a categorical distribution to model our world. 
+
+\section{The problem}
+
+As stated in the introduction, we are going to fit a categorical probability model to our data.
+Using Bayes' rule we have:
+
+\begin{equation}
+\label{bayes}
+Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
+\end{equation}
+
+Assuming the data can be classified using linear functions, N activations are needed to enforce the constrains.
+Since we are solving for multi-class classification, a logistic sigmoid function as activation will not be valid.
+Instead a softmax is used for each $a_{n}$.
+
+\begin{align}
+\label{activations}
+a_{n} &= \phi_{n}^{T}x \\
+\lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] &= 
+\frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
+\end{align}
+
+For the prior we are going to use a normal distribution with zero mean and $\sigma^{2}$ variance.
+In order to simplify the calculations we are going to minimise the log of the probability, where $y_{in}$ is the softmax expression for class $n$ and data $i$:
+
+\begin{equation}
+\label{L}
+L = - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
+\end{equation}
+
+We will use the gradient and Hessian updates shown below.
+
+%Change for partial
+\begin{align}
+\label{Grad-Hess-Update}
+\frac{\partial L}{ \partial \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
+\frac{\partial^{2} L}{ \partial \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
+\end{align}
+
+Predictions are calculated through Laplace approximation and Monte Carlo integration.
+
+\begin{equation}
+\label{Predictions}
+predictions = \int y_{in} \mathcal{N}_{a} \left( \mu_{a}, \Sigma_{a} \right) da
+\end{equation}
+ 
+\section{Results}
+
+We tested the classification algorithm with two different datasets.
+The first one consists of hand drawn images of single digits from zero to nine, stored as a 784 vector of pixel values.
+While the second one consists of pictures of eight different objects against a blue background, stored as a 576 vector of pixel values.
+We present two tables showing prediction accuracy using different variances for the normal distribution prior and for several values of the $\phi_{0}$ vector. 
+
+\begin{table}[h]
+\begin{tabular}{l|lllllll}
+Digits dataset &  &  &  &  &  &  &  \\ \hline
+Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \hline
+$\phi_{0}$ & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2.5} \\ \hline
+Prediction Accuracy & \multicolumn{1}{l|}{88\%} & \multicolumn{1}{l|}{86\%} & \multicolumn{1}{l|}{77\%} & \multicolumn{1}{l|}{48\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{83\%} \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\begin{tabular}{l|lllllll}
+ETH-80-HoG dataset &  &  &  &  &  &  &  \\ \hline
+Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} \\ \hline
+$\phi_{0}$ & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{-10} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{10} \\ \hline
+Prediction Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \multicolumn{1}{l|}{84\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} \\ \hline
+\end{tabular}
+\end{table}
+
+For the \textit{Digits} dataset is clear that a smaller variance value, yields better predictions.
+Thus indicating that a spiked normal distribution centred at zero is a reasonable guess.
+With respect to the numerical minimization, we do not see significant improvements when using different $\phi_{0}$ values. 
+Except for 2.5 which gives a decrease in performance, then indicating the existence of a worse local minima in that region.
+
+%Check believe spelling, the same as the one above
+While for the \textit{ETH-80} dataset, the trend is better accuracy as the variance increases.
+Therefore the prior believe must be erroneous.
+The effect of the initial guess for $\phi$ does not seem to affect the end result.
+However, if set to zeros it does not converge or at least it does so quite slowly.
+Which could be an indicator of a valley where the gradient is zigzagging.
+ 
+\end{document}
