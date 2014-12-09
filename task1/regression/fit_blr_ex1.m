@@ -1,43 +1,44 @@
 %% Load data
-data_path = {'data/MNIST_Data.mat', 'data/ETH-80_HoG_Data.mat'};
-data_index = 1;
+data_path = 'data/Fonts_n_to_m.mat';
 
-load(data_path{data_index});
-
-num_classes = length(unique(Y));
-n_train = size(trainingIndices, 1);
-n_test = size(testIndices, 1);
+load(data_path);
 
 var_prior = 6;
 
-if data_index == 1
-    % Pick the first n_train samples for training
-    X_train = X(1:n_train, :);
-    Y_train = Y(1:n_train);
+n_train = size(trainingIndices, 1);
+n_test = size(testIndices, 1);
 
-    % And the next n_test samples for testing
-    X_test = X(n_train + 1:n_train + n_test, :);
-    Y_test = Y(n_train + 1:n_train + n_test);
+X_train = [ones(1, n_train); X(trainingIndices, :)'];
+X_test = [ones(1, n_test); X(testIndices, :)'];
 
-    % The class index in this data set starts at zero, increment for
-    % matlab indexing
-    w = Y_train + 1;
-end
+w = Y(trainingIndices,:);
 
-if data_index == 2 || data_index == 3
-    % Pick trainingIndices samples for training
-    X_train = X(trainingIndices, :);
-    Y_train = Y(trainingIndices);
+D = size(X,2);
 
-    % Pick testIndices samples for testing
-    X_test = X(testIndices, :);
-    Y_test = Y(testIndices);
-    w = Y_train;
-end
-
-% Format the data for fit_bmclr
-X_train_blr = [ones(1,size(X_train,1)); X_train'];
-X_test_blr = [ones(1,size(X_test,1)); X_test'];
-
+mu_test = zeros(n_test, D);
 % Fit Bayesian linear regression model.
-[mu_test, var_test, var, A_inv] = fit_blr (X_train_blr, w, var_prior, X_test_blr);
+for d=1:D
+    [mu_test(:,d), var_test, var, A_inv] = fit_blr (X_train(d,:), w(:,d), var_prior, X_test(d,:));
+end
+
+
+plotNormalized = 0;
+plotDev = 0;
+Y_test = Y(testIndices, :);
+for i=1:n_test
+    figure;
+    plotCharacter(Y(testIndices(i), :), 'b-');
+    if plotNormalized
+        mu_test(i,:) = norm(Y_test(i,:))* mu_test(i,:) / norm(mu_test(i,:));
+        var_test(i,:) = norm(Y_test(i,:))* var_test(i,:) / norm(mu_test(i,:));
+    end
+    plotCharacter(mu_test(i, :), 'r-');
+    if plotDev
+        standardDeviation = var_test(i,:).^0.5;
+        varMax = max(mu_test(i, :) + 2*standardDeviation,mu_test(i, :) - 2*standardDeviation);
+        varMin = min(mu_test(i, :) + 2*standardDeviation,mu_test(i, :) - 2*standardDeviation);
+        plotCharacter(varMax, 'k.');
+        plotCharacter(varMin, 'k.');
+    end
+end
+
