@@ -9,7 +9,7 @@ data_index = 1;
 
 load(data_path{data_index});
 
-% Set random seed for reapitable results
+% Set random seed for repeatable results
 rng('default');
 
 %Uncomment to work with less data
@@ -52,7 +52,7 @@ end
 % Gaussian will be associated with the class with max votes
 [~, gaussian_real_class] = max(gaussians_class_vote');
 
-% Subsititute the gaussian number for class number
+% Substitute the gaussian number for class number
 predictions_class = arrayfun(@(x) gaussian_real_class(x), predictions_class);
 
 % Check num hits
