@@ -46,7 +46,7 @@ end
 
 var_test = var_test';
 
-num_relevant = sum(relevant);
+num_relevant = length(relevant);
 
 fprintf('Using %d relevance vectors\n', num_relevant);
 
@@ -79,7 +79,7 @@ end
 xRelevant = X(trainingIndices(find(relevant > 0)),:);
 figure;
 for i = 1:num_relevant
-    subplot(1,3,i);
+    subplot(1,num_relevant,i);
     hold on;
     plotCharacter(xRelevant(i,:), 'b-');
 end
