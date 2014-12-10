@@ -11,6 +11,7 @@ load(data_path{data_index});
 
 % Set random seed for repeatable results
 rng('default');
+useKmeans = 1;
 
 %Uncomment to work with less data
 %X = X(1:100, :);
@@ -36,7 +37,7 @@ if data_index == 1
 end
 
 %% Fit MoG using our function fit_mog.
-[lambda, mu, sig, r] = fit_mog (X, num_classes, precision);
+[lambda, mu, sig, r] = fit_mog (X, num_classes, precision, useKmeans);
 
 %% Check accuracy
 [~, predictions_class] = max(r');
