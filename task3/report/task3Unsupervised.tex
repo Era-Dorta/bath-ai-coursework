@@ -2,6 +2,7 @@
  
 \usepackage[margin=1in]{geometry} 
 \usepackage{amsmath,amsthm,amssymb,bm}
+\usepackage{graphicx}
  
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -29,7 +30,7 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-SVM  are a quite popular choice in classification problems.
+SVM  are a popular choice in classification problems.
 However they are inherently not probabilistic.
 A technique that uses the same intuition is the Relevance Vector Machine.
 It uses a full Bayesian approach with a prior that encourages sparseness.
@@ -38,7 +39,7 @@ It uses a full Bayesian approach with a prior that encourages sparseness.
 
 First a dual model is used, previously we would model the data as a normal distribution.
 Where $w$ is the world state, $x$ is the data point, $\phi$ are the paremeters of a linear function of the data and $\sigma$ is the standard deviation.
-Using a transformation on the parameters as shown in Equation ~\ref{eq:normal}, so $\phi$ is now a weighted sum over the observed data points, where $\psi$ is a vector with the weights.
+We now apply a transformation on the parameters as shown in Equation ~\ref{eq:normal}, so $\phi$ is now a weighted sum over the observed data points, where $\psi$ is a vector with the weights.
 If we are working with few data of high dimensionality, this sum is faster to calculate, as it has less terms, that the original linear dependency.
 
 \begin{equation}
@@ -52,8 +53,8 @@ Pr(w_i|\mathbf{x}_i) = Norm_{x_i}[\phi^T \mathbf{x}_i, \sigma^2],
 \end{equation}
 
 Using the dual parameters $\psi$, we encourage sparsernes in the model by using the prior defined in Equation \ref{eq:prior}.
-Where $I$ is the number of data points, $Stud$ is a Student's t-distribution with $\nu$ degrees of freedom.
-Using a product of t-distributions produces the desired sparseness since the areas with bigger probability density are in the origin and along the axis.
+Where $I$ is the number of data points, $Stud$ is a Student's t-distribution with $\nu$ degrees of freedom and $\Gamma$ is the Gamma function.
+Using a product of t-distributions produces the desired sparseness since the areas with higher probability density are in the origin and along the axis.
 
 \begin{align}
 \label{eq:prior}
@@ -62,7 +63,7 @@ Pr(\psi) &= \prod_{i = 1}^{I} Stud_{\psi_i} [0, 1, \nu],\\
 \end{align}
 
 A t-distribution is not conjugate to a Normal distribution, so there is no simple closed form solution for the posterior.
-The solution will be to approximate the t-distributions by maximizing with respect to their hidden variables $h$, introduced in Equation \ref{eq:prHidden}, where $\mathbf{w}$ is the world state.
+The solution will be to approximate the t-distributions by maximizing with respect to their hidden variables $h$, introduced in Equation \ref{eq:prHidden}, where $\mathbf{w}$ is a one dimensional array with the world state.
 This leads to the marginal likelihood shown in Equation \ref{eq:likelihood}, where $\mathbf{I}$ is the identity matrix, $\mathbf{X}$ is a matrix with the data points and $\mathbf{H}$ is a matrix with all the hidden variables.
 
 %Check this equation
@@ -109,7 +110,49 @@ h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu},
 \end{equation}
 
 After the training process, we only take the data points whose hidden variable $h_i$ is smaller than a threshold. Since a larger one means a small $\psi_i$, and hence no significance in the weighted sum.
- 
+In the implementation, we use a Gaussian kernel $k[x_i,x_j]$, as shown in Equation \ref{eq:kernel}, instead of calculating the inner products $\mathbf{X}^T \mathbf{X}$, where $\lambda$ controls the scale of the output.
+This is more efficient than computing the inner product.
+%and it has the advantage to correspond to computing infinite length $\mathbf{X}$.
+%And using a nonlinear kernel is cool as well, dont remember how or why
+
+\begin{equation}
+\label{eq:kernel}
+k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\lambda^2} \right) \right],
+\end{equation}
+
+Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension.
+However the hidden variables matrix $\mathbf{H}$ is shared among all of them.
+
 \section{Results}
+
+In Figures \ref{fig:lambda} and \ref{fig:nu} we show results for a font data set.
+The RVM is trained with pictures of \emph{n} in different fonts and their corresponding \emph{m} in the same font.
+For testing, \emph{n} with new fonts are used.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[t]{.45\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{images/lambda2_7}
+		\caption{Blue is ground truth and red is RVM result. Top image corresponds to a kernel $\lambda=2$, bottom image has $\lambda=7$.}
+		\label{fig:lambda}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{.45\textwidth}
+		\centering
+		\includegraphics[scale=0.5]{images/nu1_0_01}
+		\caption{Blue is ground truth and red is RVM result. Top image corresponds  $\nu=0.001$, bottom image has $\nu=1$}
+		\label{fig:nu}
+	\end{minipage}
+\end{figure}
+
+In Figure \ref{fig:lambda} we see the effects of changing the value of $\lambda$.
+Since it controls the scale, we can see how the \emph{m} varies in size.
+In Figure \ref{fig:nu} variations in $\nu$ are shown.
+Smaller $\nu$ encourages more sparsity, and so less relevance vectors been used.
+For the top image 5 relevance vectors are used, while for the bottom one 10 vectors are used.
+Less vectors means a more general and sparse model used. 
+However the error in the prediction increases as we take fewer relevance vectors. 
+
+%Talk about linearity and overfitting
 
 \end{document}
