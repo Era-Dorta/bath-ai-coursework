@@ -10,8 +10,12 @@ data_index = 1;
 load(data_path{data_index});
 
 % Set random seed for repeatable results
-rng('default');
-useKmeans = 1;
+rand_seed = 'default';
+%rand_seed = 1;
+%rand_seed = 10;
+
+rng(rand_seed);
+useKmeans = 0;
 
 %Uncomment to work with less data
 %X = X(1:100, :);
@@ -59,4 +63,8 @@ predictions_class = arrayfun(@(x) gaussian_real_class(x), predictions_class);
 % Check num hits
 array_correct_pred = Y - predictions_class';
 hits = (sum(array_correct_pred == 0)/num_data) * 100;
-fprintf('Data %s, hits: %2.2f%%\n', data_path{data_index}, hits);
+if isequal(rand_seed, 'default')
+    fprintf('Rand seed default, use kmeans %d, hits: %2.2f \n', useKmeans, hits);
+else
+    fprintf('Rand seed %d, use kmeans %d, hits: %2.2f \n', rand_seed, useKmeans, hits);
+end

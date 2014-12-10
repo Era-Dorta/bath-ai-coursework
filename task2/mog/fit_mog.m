@@ -125,7 +125,7 @@ while true
     %disp(L);
     
     iterations = iterations + 1;
-    disp([num2str(iterations) ': ' num2str(L)]);
+    %disp([num2str(iterations) ': ' num2str(L)]);
     if abs(L - previous_L) < precision
         %msg = [num2str(iterations) ' iterations, log-likelihood = ', ...
         %num2str(L)];
