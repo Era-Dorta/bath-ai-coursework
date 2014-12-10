@@ -4,6 +4,7 @@
 \usepackage{amsmath,amsthm,amssymb,bm}
 \usepackage{graphicx}
 \usepackage{subfig}
+\usepackage{array}
  
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -124,21 +125,26 @@ k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\
 \section{Results}
 
 
-\begin{figure}
-\begin{tabular}{ccc}
-\subfloat[]{\includegraphics[width = 2in]{images/f1var10}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f2var10}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f3var10}} \\
-\subfloat[]{\includegraphics[width = 2in]{images/f1var1}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f2var1}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f3var1}} \\
-\subfloat[]{\includegraphics[width = 2in]{images/f1var0_1}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f2var0_1}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f3var0_1}} \\
-\subfloat[]{\includegraphics[width = 2in]{images/f1var0_01}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f2var0_01}} &
-\subfloat[]{\includegraphics[width = 2in]{images/f3var0_01}} \\
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ & $\sigma^2=10$ & $\sigma^2=1$ & $\sigma^2=0.01$ & $\sigma^2=0.001$ \\ \hline
+ Font1 & 
+\includegraphics[scale = 0.2]{images/f1var10} &
+\includegraphics[scale = 0.2]{images/f1var1} &
+\includegraphics[scale = 0.2]{images/f1var0_1} &
+\includegraphics[scale = 0.2]{images/f1var0_01} \\ \hline
+Font2 & 
+\includegraphics[scale = 0.2]{images/f2var10} &
+\includegraphics[scale = 0.2]{images/f2var1} &
+\includegraphics[scale = 0.2]{images/f2var0_1} &
+\includegraphics[scale = 0.2]{images/f2var0_01} \\ \hline
+Font3 & 
+\includegraphics[scale = 0.2]{images/f3var10} &
+\includegraphics[scale = 0.2]{images/f3var1} &
+\includegraphics[scale = 0.2]{images/f3var0_1} &
+\includegraphics[scale = 0.2]{images/f3var0_01} \\ \hline
 \end{tabular}
-\end{figure}
+\end{center}
 
 \end{document}
