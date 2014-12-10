@@ -38,7 +38,7 @@ It uses a full Bayesian approach with a prior that encourages sparseness.
 \section{The problem}
 
 First a dual model is used, previously we would model the data as a normal distribution.
-Where $w$ is the world state, $x$ is the data point, $\phi$ are the paremeters of a linear function of the data and $\sigma$ is the standard deviation.
+Where $w$ is a one dimensional array with the world state, $x$ is the data point, $\phi$ are the parameters of a linear function of the data and $\sigma$ is the standard deviation.
 We now apply a transformation on the parameters as shown in Equation ~\ref{eq:normal}, so $\phi$ is now a weighted sum over the observed data points, where $\psi$ is a vector with the weights.
 If we are working with few data of high dimensionality, this sum is faster to calculate, as it has less terms, that the original linear dependency.
 
