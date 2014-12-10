@@ -2,6 +2,8 @@
  
 \usepackage[margin=1in]{geometry} 
 \usepackage{amsmath,amsthm,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{subfig}
  
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -21,7 +23,7 @@
 
 \begin{document}
   
-\title{Task 1.1. Supervised Learning: Standard Classifier}
+\title{Task 1.2. Supervised Learning: Bayesian Linear Regressor}
 \author{Garoe Dorta-Perez\\
 CM50246: Machine Learning and AI}
  
@@ -29,91 +31,114 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-We are given the task to classify some pictures of objects in several groups.
-So, we are faced with a multi-class classification problem.
-One of the options would be to create N one-against-all binary classifiers.
-However an approach that naturally handles the multi-class nature of the problem is to use a categorical distribution to model our world. 
+SVM  are a popular choice in classification problems.
+However they are inherently not probabilistic.
+A technique that uses the same intuition is the Relevance Vector Machine.
+It uses a full Bayesian approach with a prior that encourages sparseness.
 
 \section{The problem}
 
-As stated in the introduction, we are going to fit a categorical probability model to our data.
-Using Bayes' rule we have:
+First a dual model is used, previously we would model the data as a normal distribution.
+Where $w$ is the world state, $x$ is the data point, $\phi$ are the paremeters of a linear function of the data and $\sigma$ is the standard deviation.
+We now apply a transformation on the parameters as shown in Equation ~\ref{eq:normal}, so $\phi$ is now a weighted sum over the observed data points, where $\psi$ is a vector with the weights.
+If we are working with few data of high dimensionality, this sum is faster to calculate, as it has less terms, that the original linear dependency.
 
 \begin{equation}
-\label{bayes}
-Pr(\theta | x_{1 \cdots I}) = \frac{\prod_{i = 1}^{I} Pr(\omega = k_{n} | x, \theta) Pr(\theta)} {Pr(x_{1 \cdots I})}\,
+\label{eq:normal}
+Pr(w_i|\mathbf{x}_i) = Norm_{x_i}[\phi^T \mathbf{x}_i, \sigma^2],
 \end{equation}
 
-Assuming the data can be classified using linear functions, N activations are needed to enforce the constrains.
-Since we are solving for multi-class classification, a logistic sigmoid function as activation will not be valid.
-Instead a softmax is used for each $a_{n}$.
+\begin{equation}
+\label{eq:dual}
+\phi = \mathbf{X} \psi,
+\end{equation}
+
+Using the dual parameters $\psi$, we encourage sparsernes in the model by using the prior defined in Equation \ref{eq:prior}.
+Where $I$ is the number of data points, $Stud$ is a Student's t-distribution with $\nu$ degrees of freedom and $\Gamma$ is the Gamma function.
+Using a product of t-distributions produces the desired sparseness since the areas with higher probability density are in the origin and along the axis.
 
 \begin{align}
-\label{activations}
-a_{n} &= \phi_{n}^{T}x \\
-\lambda_{n} = softmax_{n}[a_{1}, a_{2} \cdots a_{N}] &= 
-\frac{exp[a_{n}]} {\sum_{m = 1}^{N} exp[a_{m}] }\,
+\label{eq:prior}
+Pr(\psi) &= \prod_{i = 1}^{I} Stud_{\psi_i} [0, 1, \nu],\\
+&= \prod_{i=1}^I \frac{\Gamma \left( \frac{\nu + 1}{2} \right)}{ \sqrt{\nu \pi} \Gamma \left(\frac{\nu}{2} \right) } \left( 1 + \frac{\psi^2_i}{\nu} \right)^{- (\nu+1)/2},
 \end{align}
 
-For the prior we are going to use a normal distribution with zero mean and $\sigma^{2}$ variance.
-In order to simplify the calculations we are going to minimise the log of the probability, where $y_{in}$ is the softmax expression for class $n$ and data $i$:
+A t-distribution is not conjugate to a Normal distribution, so there is no simple closed form solution for the posterior.
+The solution will be to approximate the t-distributions by maximizing with respect to their hidden variables $h$, introduced in Equation \ref{eq:prHidden}, where $\mathbf{w}$ is a one dimensional array with the world state.
+This leads to the marginal likelihood shown in Equation \ref{eq:likelihood}, where $\mathbf{I}$ is the identity matrix, $\mathbf{X}$ is a matrix with the data points and $\mathbf{H}$ is a matrix with all the hidden variables.
 
+%Check this equation
 \begin{equation}
-\label{L}
-L = - log \sum_{i = 1}^{I} y_{in} + \frac{1}{2 \sigma^{2}} \phi^{T} \phi 
+\label{eq:prHidden}
+Pr(\psi) = \prod_{i = 1}^{I} \int Norm_{\mathbf{w}}[0,1/h_i] Gam_{h_i}[\nu/2, \nu/2] dh_i,
 \end{equation}
 
-We will use the gradient and Hessian updates shown below.
+\begin{equation}
+\label{eq:likelihood}
+Pr(\mathbf{w}|\mathbf{X},\sigma^2) \approx \begin{array}{c}
+		\\
+      max \\
+      \mathbf{ \mbox{\small H} }
+    \end{array} \left[ Norm_{\mathbf{w}} \left[ \mathbf{0}, \mathbf{X}^T \mathbf{X} \mathbf{H}^{-1} \mathbf{X}^T \mathbf{X} + \sigma^2 \mathbf{I} \right] \prod_{d =1}^D Gam_{h_d} \left[ \nu /2, \nu/2 \right]  \right],
+\end{equation}
 
-%Change for partial
-\begin{align}
-\label{Grad-Hess-Update}
-\frac{\partial L}{ \partial \phi_{n}} &= \sum_{i = 1}^{I} \left( y_{in} - \delta \left[ \omega_{i} - n \right] \right) \mathbf{x}_{i}  + \frac{\phi} {\sigma^{2}} \nonumber \\
-\frac{\partial^{2} L}{ \partial \phi_{m}\phi_{n}} &= \sum_{i = 1}^{I} y_{im} \left( \delta \left[ m - n \right] - y_{in} \mathbf{x}_{i} \mathbf{x}_{i}^{T}  \right) +  \frac{\delta \left[ m - n \right]}{\sigma^{2}} \nonumber \\
-\end{align}
-
-Predictions are calculated through Laplace approximation and Monte Carlo integration.
+The optimization is performed in three steps:
+\begin{enumerate}
+\item Optimize the marginal likelihood with respect to the hidden variables, using Equation \ref{eq:hiddenVar}.
 
 \begin{equation}
-\label{Predictions}
-predictions = \int y_{in} \mathcal{N}_{a} \left( \mu_{a}, \Sigma_{a} \right) da
+\label{eq:hiddenVar}
+h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu},
 \end{equation}
+
+\item Update $\boldsymbol{\mu}$ and $\mathbf{\Sigma}$, using Equation \ref{eq:muSigma}.
+
+\begin{equation}
+\label{eq:muSigma}
+\begin{split}
+\boldsymbol{\mu} &= \frac{1}{\sigma^2} \mathbf{A}^{-1} \mathbf{X}^T \mathbf{X} \mathbf{w},\\
+\mathbf{\Sigma} &= \mathbf{A}^{-1},\\
+\mathbf{A} &= \frac{1}{\sigma^2} \mathbf{X}^T \mathbf{X} \mathbf{X}^T \mathbf{X} + \mathbf{H},
+\end{split}
+\end{equation}
+
+\item Optimize the marginal likelihood with respect to the variance parameter, using Equation \ref{eq:sigma}.
+\end{enumerate}
  
+\begin{equation}
+\label{eq:sigma}
+(\sigma^2)^{new} = \frac{1}{\mathbf{I} - \sum_i ( 1 - h_i \sum_{ii})}  \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right)^T \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right),
+\end{equation}
+
+After the training process, we only take the data points whose hidden variable $h_i$ is smaller than a threshold. Since a larger one means a small $\psi_i$, and hence no significance in the weighted sum.
+In the implementation, we use a Gaussian kernel $k[x_i,x_j]$, as shown in Equation \ref{eq:kernel}, instead of calculating the inner products $\mathbf{X}^T \mathbf{X}$, where $\lambda$ controls the scale of the output.
+This is more efficient than computing the inner product.
+%and it has the advantage to correspond to computing infinite length $\mathbf{X}$.
+%And using a nonlinear kernel is cool as well, dont remember how or why
+
+\begin{equation}
+\label{eq:kernel}
+k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\lambda^2} \right) \right],
+\end{equation}
+
 \section{Results}
 
-We tested the classification algorithm with two different datasets.
-The first one consists of hand drawn images of single digits from zero to nine, stored as a 784 vector of pixel values.
-While the second one consists of pictures of eight different objects against a blue background, stored as a 576 vector of pixel values.
-We present two tables showing prediction accuracy using different variances for the normal distribution prior and for several values of the $\phi_{0}$ vector. 
 
-\begin{table}[h]
-\begin{tabular}{l|lllllll}
-Digits dataset &  &  &  &  &  &  &  \\ \hline
-Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{1} \\ \hline
-$\phi_{0}$ & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{0.1} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2.5} \\ \hline
-Prediction Accuracy & \multicolumn{1}{l|}{88\%} & \multicolumn{1}{l|}{86\%} & \multicolumn{1}{l|}{77\%} & \multicolumn{1}{l|}{48\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{87\%} & \multicolumn{1}{l|}{83\%} \\ \hline
+\begin{figure}
+\begin{tabular}{ccc}
+\subfloat[]{\includegraphics[width = 2in]{images/f1var10}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f2var10}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f3var10}} \\
+\subfloat[]{\includegraphics[width = 2in]{images/f1var1}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f2var1}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f3var1}} \\
+\subfloat[]{\includegraphics[width = 2in]{images/f1var0_1}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f2var0_1}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f3var0_1}} \\
+\subfloat[]{\includegraphics[width = 2in]{images/f1var0_01}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f2var0_01}} &
+\subfloat[]{\includegraphics[width = 2in]{images/f3var0_01}} \\
 \end{tabular}
-\end{table}
+\end{figure}
 
-\begin{table}[h]
-\begin{tabular}{l|lllllll}
-ETH-80-HoG dataset &  &  &  &  &  &  &  \\ \hline
-Prior Variance & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{10} & \multicolumn{1}{l|}{100} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} & \multicolumn{1}{l|}{1000} \\ \hline
-$\phi_{0}$ & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{0.125} & \multicolumn{1}{l|}{-10} & \multicolumn{1}{l|}{-1} & \multicolumn{1}{l|}{10} \\ \hline
-Prediction Accuray & \multicolumn{1}{l|}{67\%} & \multicolumn{1}{l|}{74\%} & \multicolumn{1}{l|}{84\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} & \multicolumn{1}{l|}{89\%} \\ \hline
-\end{tabular}
-\end{table}
-
-For the \textit{Digits} dataset is clear that a smaller variance value, yields better predictions.
-Thus indicating that a spiked normal distribution centred at zero is a reasonable guess.
-With respect to the numerical minimization, we do not see significant improvements when using different $\phi_{0}$ values. 
-Except for 2.5 which gives a decrease in performance, then indicating the existence of a worse local minima in that region.
-
-%Check believe spelling, the same as the one above
-While for the \textit{ETH-80} dataset, the trend is better accuracy as the variance increases.
-Therefore the prior believe must be erroneous.
-The effect of the initial guess for $\phi$ does not seem to affect the end result.
-However, if set to zeros it does not converge or at least it does so quite slowly.
-Which could be an indicator of a valley where the gradient is zigzagging.
- 
 \end{document}
