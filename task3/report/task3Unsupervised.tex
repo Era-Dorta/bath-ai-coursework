@@ -49,7 +49,7 @@ Pr(w_i|\mathbf{x}_i) = Norm_{x_i}[\phi^T \mathbf{x}_i, \sigma^2],
 
 \begin{equation}
 \label{eq:dual}
-\phi = \mathbf{X} \psi,
+\phi = \mathbf{X} \psi.
 \end{equation}
 
 Using the dual parameters $\psi$, we encourage sparsernes in the model by using the prior defined in Equation \ref{eq:prior}.
@@ -59,7 +59,7 @@ Using a product of t-distributions produces the desired sparseness since the are
 \begin{align}
 \label{eq:prior}
 Pr(\psi) &= \prod_{i = 1}^{I} Stud_{\psi_i} [0, 1, \nu],\\
-&= \prod_{i=1}^I \frac{\Gamma \left( \frac{\nu + 1}{2} \right)}{ \sqrt{\nu \pi} \Gamma \left(\frac{\nu}{2} \right) } \left( 1 + \frac{\psi^2_i}{\nu} \right)^{- (\nu+1)/2},
+&= \prod_{i=1}^I \frac{\Gamma \left( \frac{\nu + 1}{2} \right)}{ \sqrt{\nu \pi} \Gamma \left(\frac{\nu}{2} \right) } \left( 1 + \frac{\psi^2_i}{\nu} \right)^{- (\nu+1)/2}.
 \end{align}
 
 A t-distribution is not conjugate to a Normal distribution, so there is no simple closed form solution for the posterior.
@@ -78,7 +78,7 @@ Pr(\mathbf{w}|\mathbf{X},\sigma^2) \approx \begin{array}{c}
 		\\
       max \\
       \mathbf{ \mbox{\small H} }
-    \end{array} \left[ Norm_{\mathbf{w}} \left[ \mathbf{0}, \mathbf{X}^T \mathbf{X} \mathbf{H}^{-1} \mathbf{X}^T \mathbf{X} + \sigma^2 \mathbf{I} \right] \prod_{d =1}^D Gam_{h_d} \left[ \nu /2, \nu/2 \right]  \right],
+    \end{array} \left[ Norm_{\mathbf{w}} \left[ \mathbf{0}, \mathbf{X}^T \mathbf{X} \mathbf{H}^{-1} \mathbf{X}^T \mathbf{X} + \sigma^2 \mathbf{I} \right] \prod_{d =1}^D Gam_{h_d} \left[ \nu /2, \nu/2 \right]  \right].
 \end{equation}
 
 The optimization is performed in three steps:
@@ -87,7 +87,7 @@ The optimization is performed in three steps:
 
 \begin{equation}
 \label{eq:hiddenVar}
-h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu},
+h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu}.
 \end{equation}
 
 \item Update $\boldsymbol{\mu}$ and $\mathbf{\Sigma}$, using Equation \ref{eq:muSigma}.
@@ -97,7 +97,7 @@ h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu},
 \begin{split}
 \boldsymbol{\mu} &= \frac{1}{\sigma^2} \mathbf{A}^{-1} \mathbf{X}^T \mathbf{X} \mathbf{w},\\
 \mathbf{\Sigma} &= \mathbf{A}^{-1},\\
-\mathbf{A} &= \frac{1}{\sigma^2} \mathbf{X}^T \mathbf{X} \mathbf{X}^T \mathbf{X} + \mathbf{H},
+\mathbf{A} &= \frac{1}{\sigma^2} \mathbf{X}^T \mathbf{X} \mathbf{X}^T \mathbf{X} + \mathbf{H}.
 \end{split}
 \end{equation}
 
@@ -106,7 +106,7 @@ h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu},
  
 \begin{equation}
 \label{eq:sigma}
-(\sigma^2)^{new} = \frac{1}{\mathbf{I} - \sum_i ( 1 - h_i \sum_{ii})}  \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right)^T \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right),
+(\sigma^2)^{new} = \frac{1}{\mathbf{I} - \sum_i ( 1 - h_i \sum_{ii})}  \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right)^T \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right).
 \end{equation}
 
 After the training process, we only take the data points whose hidden variable $h_i$ is smaller than a threshold. Since a larger one means a small $\psi_i$, and hence no significance in the weighted sum.
@@ -117,7 +117,7 @@ This is more efficient than computing the inner product.
 
 \begin{equation}
 \label{eq:kernel}
-k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\lambda^2} \right) \right],
+k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\lambda^2} \right) \right].
 \end{equation}
 
 Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension in  $\mathbf{w_i}$.
