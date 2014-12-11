@@ -14,7 +14,8 @@ function [ cluster_mu, cluster_assig ] = kmeans( X, K )
     end
     overall_covar = overall_covar ./ I;
     
-    cluster_assig = zeros(1, I);
+    % Set first K points to each cluster and the rest randomly
+    cluster_assig = [1:K, randi(K,1,I - K)];
        
     % Initialize each cluster randomly
     cluster_mu = mvnrnd(overall_mu, overall_covar, K);
@@ -31,7 +32,10 @@ function [ cluster_mu, cluster_assig ] = kmeans( X, K )
             end
             % Update cluster assignments based on closest cluster
             [~, new_cluster] = min(distances(i,:));
-            if new_cluster ~= cluster_assig(i)
+            % If the cluster is going to get empty then don't update, as the
+            % distance will be zero when it gets recalculated on the next
+            % step
+            if new_cluster ~= cluster_assig(i) && length(find(cluster_assig == cluster_assig(i))) > 1
                 cluster_assig(i) = new_cluster;
                 not_change = true;
             end
@@ -40,12 +44,7 @@ function [ cluster_mu, cluster_assig ] = kmeans( X, K )
         % Update cluster means from data that was assigned to this cluster
         for k=1:K
             cluster_ind = find(cluster_assig == k);
-            if isempty(cluster_ind)
-                % Empty cluster, set the mean to zero
-                cluster_mu(k,:) = 0;
-            else
-                cluster_mu(k,:) = sum(X(cluster_ind, :)) / length(cluster_ind);
-            end
+            cluster_mu(k,:) = sum(X(cluster_ind, :)) / length(cluster_ind);
         end
     end
 end
