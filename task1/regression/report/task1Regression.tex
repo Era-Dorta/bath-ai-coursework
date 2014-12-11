@@ -42,7 +42,7 @@ Where $\mathbf{w}$ is a one dimensional array with the world state, $\mathbf{X}$
 
 \begin{equation}
 \label{eq:bayes}
-Pr(\phi | \mathbf{X}, \mathbf{w} ) = \frac{ Pr(\mathbf{w} | \mathbf{X}, \phi) Pr(\phi)} {Pr(\mathbf{w} | \mathbf{X} )}\,
+Pr(\phi | \mathbf{X}, \mathbf{w} ) = \frac{ Pr(\mathbf{w} | \mathbf{X}, \phi) Pr(\phi)} {Pr(\mathbf{w} | \mathbf{X} )}.
 \end{equation}
 
 The prior in Equation \ref{eq:bayes} is a normal distribution with 0 mean and spherical covariance.
@@ -51,7 +51,7 @@ Where  $\sigma^2$ is the covariance, $\mathbf{I}$ is the identity matrix and $\b
 
 \begin{equation}
 \label{eq:normMulti}
-Pr(\mathbf{w} | \mathbf{X}, \boldsymbol{\theta} ) = Norm_{\mathbf{w}}\left[ \mathbf{X}^T \phi, \sigma^2 \mathbf{I} \right],
+Pr(\mathbf{w} | \mathbf{X}, \boldsymbol{\theta} ) = Norm_{\mathbf{w}}\left[ \mathbf{X}^T \phi, \sigma^2 \mathbf{I} \right].
 \end{equation}
 
 The posterior distribution is shown in Equation \ref{eq:posterior}.
@@ -60,7 +60,7 @@ The posterior distribution is shown in Equation \ref{eq:posterior}.
 \begin{split}
 \label{eq:posterior}
 Pr(\phi | \mathbf{X}, \mathbf{w} ) &= Norm_{\phi}\left[ \frac{1}{\sigma^2} \mathbf{A}^{-1} \mathbf{X} \mathbf{w}, \mathbf{A}^{-1} \right],\\
-\mathbf{A} &= \frac{1}{\sigma^2} \mathbf{X} \mathbf{X}^T + \frac{1}{\sigma^2_p} \mathbf{I},
+\mathbf{A} &= \frac{1}{\sigma^2} \mathbf{X} \mathbf{X}^T + \frac{1}{\sigma^2_p} \mathbf{I}.
 \end{split}
 \end{equation}
 
@@ -70,7 +70,7 @@ The probability distribution of a new world state $w^*$ over new test data $x^*$
 \begin{split}
 \label{eq:newWorld}
 Pr(w^* | \mathbf{x}^*, \mathbf{X}, \mathbf{w}) &= \int Pr(w^* | \mathbf{x}^*, \phi) Pr(\phi | \mathbf{X}, \mathbf{w} ) d \phi,\\
- &= Norm_{w^*} \left[ \frac{1}{\sigma^2} \mathbf{x}^{*T} \mathbf{A}^{-1} \mathbf{X} \mathbf{w}, \mathbf{x}^{*T} \mathbf{A}^{-1} \mathbf{x}^* + \sigma^2  \right],
+ &= Norm_{w^*} \left[ \frac{1}{\sigma^2} \mathbf{x}^{*T} \mathbf{A}^{-1} \mathbf{X} \mathbf{w}, \mathbf{x}^{*T} \mathbf{A}^{-1} \mathbf{x}^* + \sigma^2  \right].
 \end{split}
 \end{equation}
 
