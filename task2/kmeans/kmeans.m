@@ -40,7 +40,12 @@ function [ cluster_mu, cluster_assig ] = kmeans( X, K )
         % Update cluster means from data that was assigned to this cluster
         for k=1:K
             cluster_ind = find(cluster_assig == k);
-            cluster_mu(k,:) = sum(X(cluster_ind, :)) / length(cluster_ind);
+            if isempty(cluster_ind)
+                % Empty cluster, set the mean to zero
+                cluster_mu(k,:) = 0;
+            else
+                cluster_mu(k,:) = sum(X(cluster_ind, :)) / length(cluster_ind);
+            end
         end
     end
 end
