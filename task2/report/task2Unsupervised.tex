@@ -41,26 +41,27 @@ We are going to assume that each cluster is linearly separable from the rest.
 \subsection{K-Means}
 
 K-Means algorithm is based on clustering according to a set of prototype vectors.
-Each prototype represents a cluster and the data it contains.
+Each prototype will be a representation of a cluster and the data it contains.
 
 The input would be the input matrix data $X$ and the number of cluster $K$.
-While the output is a matrix with the cluster means $\boldsymbol{\mu}$ and a one dimensional array $h$ with indexes each point to its cluster.
+While the output is a matrix with the cluster means $\boldsymbol{\mu}$ and a one dimensional array $h$ which indexes each point to its cluster.
+ 
+Initially the means of each cluster are assigned by taking $K$ random samples from a multivariate normal distribution with the data mean and covariance.
 
-Initially the means of each cluster are assigned randomly, by sampling from a multivariate normal distribution with the data mean and covariance.
-
-The algorithm then does:
+The algorithm then performs the following actions:
 
 \begin{enumerate}
 \item Assign each point to its nearest cluster.
 \item Recalculate the means of the clusters.
 \end{enumerate}
 
-This processes in then repeated until no points get reassigned in one iteration.
+For the first step, the distance to each cluster is defined as the euclidean distance from the data point to the cluster prototype.
+This two stages are repeated until no points get reassigned in one iteration.
  
 \subsection{Mixture of Gaussians}
 
-Mixture of Gaussians assumes the data can be modelled using a weighted sum of $K$ normal distributions, as shown in Equation \ref{eq:prGaussian}.
-Where for each of the normal distribution, $\boldsymbol{\mu}_k$ is the mean, $\mathbf{\Sigma}_k$ is the covariance, $\lambda_k$ is the weight and $\boldsymbol{\theta} = \left\{ \lambda_k, \boldsymbol{\mu}_k, \mathbf{\Sigma}_k \right\}_{k=1}^K $
+A mixture of gaussians approach assumes the data can be modelled using a weighted sum of $K$ normal distributions, as shown in Equation \ref{eq:prGaussian}.
+Where for each of the normal distributions, $\boldsymbol{\mu}_k$ is the mean, $\mathbf{\Sigma}_k$ is the covariance, $\lambda_k$ is the weight and $\boldsymbol{\theta} = \left\{ \lambda_k, \boldsymbol{\mu}_k, \mathbf{\Sigma}_k \right\}_{k=1}^K $
 
 \begin{equation}
 \begin{split}
@@ -71,11 +72,9 @@ s.t. \qquad & \sum_{k = 1}^K \lambda_k = 1
 \end{equation}
 
 %Why noooot????
-A close form solution is not found if we opt for a maximum likelihood approach to learn the parameters.
-Introducing a hidden variable .....
-
-The solution is to perform a expectation maximization technique.
-In order to do that we first need to add a hidden variable $h \in \left\{ 1 \cdots K \right\} $ to our model, as shown in Equation \ref{eq:addHidden}.
+A close form solution is not found if we try to learn the parameters using a maximum likelihood approach.
+The solution is to use a expectation maximization technique.
+In order to do it, a hidden variable $h \in \left\{ 1 \cdots K \right\} $ has to be added to the model, as shown in Equation \ref{eq:addHidden}.
 
 \begin{equation}
 \begin{split}
@@ -87,8 +86,19 @@ Pr(\mathbf{x}| \boldsymbol{\theta}) &= \sum_{k=1}^K Pr(\mathbf{x}, h = k, \bolds
 \end{equation}
 
 
-This uses a random initialization, then performs an E-step and a M-step.
-In the first one the posterior probability distribution $Pr(h_i|\mathbf{x}_i)$ of each hidden variable $h_i$ is calculated, using Equation \ref{eq:respCalc};
+A expectation maximization consist of a initialization, followed by alternating E-steps and M-steps until a solution is found.
+The initialization step is shown in Equation \ref{eq:mixInit}, where $Rand()$ is a random value and $\Sigma_{\mathbf{X}}$ is the overall covariance of the data set.
+
+\begin{align}
+\begin{split}
+\label{eq:mixInit}
+\lambda_k^0 &= \frac{1}{K},\\
+\mu_k^0 &= Rand(),\\
+\Sigma_k^0 &= \Sigma_{\mathbf{X}}
+\end{split}
+\end{align}
+
+For the E-step the posterior probability distribution $Pr(h_i|\mathbf{x}_i)$ of each hidden variable $h_i$ is calculated, using Equation \ref{eq:respCalc};
 
 \begin{equation}
 \label{eq:respCalc}
@@ -106,7 +116,8 @@ In the M-step the $\lambda$, $\boldsymbol\mu$ and $\mathbf{\Sigma}$ are updated,
 \end{split}
 \end{equation}
 
-A better initialization for the means of the gaussians is to run the k-means first and then use cluster means instead of the previous random values.
+An alternative to the random initialization for the means of the gaussians is to run the k-means first and then assign the cluster means to the gaussians means.
+I.e. $\mu^0_k = \mu_{mi}$, where $\mu_{mi}$ is the mean of the cluster $i$ in the k-means output. 
 
 \section{Results}
 
