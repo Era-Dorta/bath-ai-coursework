@@ -131,15 +131,12 @@ Table \ref{tab:results}.
 \begin{table}[h]
 \caption[Table caption text]{Percentages of correctly classified digits, showing data for different models and random initializations, where $rs$ is the value of the random seed initialization in the matlab $rng$ function }
 \label{tab:results}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|l|c|c|c|}
 \hline
-Model                 & Data1 & Data2 \\ \hline
-K-Means(0)              & 53.73\%             &   54.42\%     \\ \hline
-K-Means(1)              & 59.30\%             &   49.48\%      \\ \hline
-Mixture of  Gaussians(0) & 38.13\%            &  12.50\%     \\ \hline
-Mixture of  Gaussians(1) & 62.37\%            &  12.50\%     \\ \hline
-Combined(0)             & 54.03\%             &    12.50\%     \\ \hline
-Combined(1)              & 61.50\%            &    18.57\%    \\ \hline
+Model                 & $rs = ` default \textrm'$ & $rs = 1$ & $rs = 10$ \\ \hline
+K-Means               & 53.73\%             &   	59.30\%    &    60.73\%     \\ \hline
+Mixture of  Gaussians & 38.13\%             &   	62.37\%    &    46.70\%     \\ \hline
+Combined              & 54.03\%             &    61.50\%    &    62.93\%     \\ \hline
 \end{tabular}
 \end{table}
  
