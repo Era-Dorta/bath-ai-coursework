@@ -30,17 +30,14 @@ CM50246: Machine Learning and AI}
  
 \section{Introduction}
  
-SVM  are a popular choice in classification problems.
-However they are inherently not probabilistic.
-A technique that uses the same intuition is the Relevance Vector Machine(RVM).
-However, RVMs use a full Bayesian approach with a prior that encourages sparseness.
+Support vector machines (SVM) are a popular non-probabilistic choice for classification problems.
+A technique that uses the same intuition, is the Relevance Vector Machine (RVM), however, they use a full Bayesian approach with a prior that encourages sparseness.
 
 \section{The problem}
 
-First a dual model is derived, we begin by modelling the data with a normal distribution, as shown in Equation \ref{eq:normal}.
-Where $w$ is a one dimensional array with the world state, $x_i$ is a data point, $\phi$ are the parameters of a linear function of the data and $\sigma$ is the standard deviation.
+First a dual model is derived, we begin by modelling the data with a normal distribution, as shown in Equation \ref{eq:normal}, where $w$ is a one dimensional array with the world state, $x_i$ is a data point, $\phi$ are the parameters of a linear function of the data and $\sigma$ is the standard deviation.
 We now apply a transformation on the parameters as shown in Equation ~\ref{eq:dual}, so $\phi$ is now a weighted sum over the observed data points, where $\psi$ is a vector with the weights.
-If the data dimensionality is larger than the amount of data points, the weighted sum can be computed in less time, as it has less terms, than the original linear dependency.
+If the data dimensionality is larger than the amount of data points, the weighted sum can be computed in less time, as it has less terms than the original linear dependency.
 
 \begin{equation}
 \label{eq:normal}
@@ -52,8 +49,7 @@ Pr(w_i|\mathbf{x}_i) = Norm_{x_i}[\phi^T \mathbf{x}_i, \sigma^2],
 \phi = \mathbf{X} \psi.
 \end{equation}
 
-Once we are using the dual parameters $\psi$, sparseness can be encouraged in the model by using the prior defined in Equation \ref{eq:prior}.
-Where $I$ is the number of data points, $Stud$ is a Student's t-distribution with $\nu$ degrees of freedom and $\Gamma$ is the Gamma function.
+when we are using the dual parameters $\psi$, sparseness can be encouraged in the model by including the prior defined in Equation \ref{eq:prior}, where $I$ is the number of data points, $Stud$ is a Student's t-distribution with $\nu$ degrees of freedom and $\Gamma$ is the Gamma function.
 Using a product of t-distributions produces the desired sparseness since the areas with higher probability density are in the origin and along the axis.
 
 \begin{equation}
@@ -111,9 +107,9 @@ h_i^{new} = \frac{1 - h_i \sum_{ii} + \nu}{\mu^2_i + \nu}.
 (\sigma^2)^{new} = \frac{1}{\mathbf{I} - \sum_i ( 1 - h_i \sum_{ii})}  \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right)^T \left( \mathbf{w} - \mathbf{X}^T \mathbf{X} \boldsymbol{\mu} \right).
 \end{equation}
 
-After the training process, we only take the data points whose hidden variable $h_i$ is smaller than a threshold. Since a larger one means a small $\psi_i$, and hence no significance in the weighted sum.
+After the training process, we only take the data points whose hidden variable $h_i$ is smaller than a threshold, larger one means a small $\psi_i$, and hence no significance in the weighted sum.
 In the implementation, a Gaussian kernel $k[x_i,x_j]$ is used, as shown in Equation \ref{eq:kernel}, where $\lambda$ controls the scale of the output.
-So instead of calculating the inner products $\mathbf{X}^T \mathbf{X}$ a kernel matrix is computed.
+Instead of calculating the inner products $\mathbf{X}^T \mathbf{X}$ a kernel matrix is computed.
 This is more efficient than calculating the inner product, specially for highly dimensional data.
 %and it has the advantage to correspond to computing infinite length $\mathbf{X}$.
 %And using a nonlinear kernel is cool as well, dont remember how or why
@@ -123,8 +119,8 @@ This is more efficient than calculating the inner product, specially for highly 
 k[x_i, x_j] = exp \left[ - \frac{1}{2} \left( \frac{(x_i - x_j)^T (x_i - x_j)}{\lambda^2} \right) \right].
 \end{equation}
 
-Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension in  $\mathbf{w_i}$.
-However the hidden variables matrix $\mathbf{H}$ is shared among all of them.
+Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension of  $\mathbf{w_i}$.
+However, the hidden variables matrix $\mathbf{H}$ is shared among all of them, in order to conserve a sparse structure.
 
 \section{Results}
 
@@ -153,10 +149,8 @@ Since it controls the scale, we can see how the \emph{m} varies in size.
 In Figure \ref{fig:nu}, results for different values of $\nu$ are shown.
 Smaller $\nu$ encourages more sparsity, and so less relevance vectors been used.
 For the top image 5 relevance vectors are used, while for the bottom one 10 vectors are used.
-Fewer vectors leads to a more general and sparse model used. 
-However the error in the prediction increases as we take less relevance vectors.
-Since our dataset had only 10 training samples, there is not much space for sparse learning.
-Yet, RVM sparseness advantages are more obvious with bigger datasets.   
+Fewer vectors lead to a more general and sparse model used, and the error in the prediction increases as we take less relevance vectors.
+Our dataset had only 10 training samples, so there is not much space for sparse learning, as RVM sparseness advantages are more evident with bigger datasets.   
 
 %Talk about linearity and overfitting
 
