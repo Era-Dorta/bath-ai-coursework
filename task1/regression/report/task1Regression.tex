@@ -37,8 +37,7 @@ Bayesian linear regressors are an extension of this model used to solve this par
 
 \section{The problem}
 
-In this model we want to compute a posterior distribution given a set of training samples, as shown in Equation \ref{eq:bayes}. 
-Where $\mathbf{w}$ is a one dimensional array with the world state, $\mathbf{X}$ is a matrix with the data points, $\phi$ are the parameters of a linear function of the data.
+In this model we want to compute a posterior distribution given a set of training samples, as shown in Equation \ref{eq:bayes}, where $\mathbf{w}$ is a one dimensional array with the world state, $\mathbf{X}$ is a matrix with the data points, $\phi$ are the parameters of a linear function of the data.
 
 \begin{equation}
 \label{eq:bayes}
@@ -46,7 +45,7 @@ Pr(\phi | \mathbf{X}, \mathbf{w} ) = \frac{ Pr(\mathbf{w} | \mathbf{X}, \phi) Pr
 \end{equation}
 
 The prior in Equation \ref{eq:bayes} is a normal distribution with 0 mean and spherical covariance.
-And the likelihood is a multivariate normal distribution, as shown in Equation \ref{eq:normMulti}.
+The likelihood is a multivariate normal distribution, as shown in Equation \ref{eq:normMulti}.
 Where  $\sigma^2$ is the covariance, $\mathbf{I}$ is the identity matrix and $\boldsymbol{\theta}= \left\{ \phi, \sigma^2 \right\}$.
 
 \begin{equation}
@@ -74,7 +73,7 @@ Pr(w^* | \mathbf{x}^*, \mathbf{X}, \mathbf{w}) &= \int Pr(w^* | \mathbf{x}^*, \p
 \end{split}
 \end{equation}
 
-Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension in  $\mathbf{w_i}$.
+Since our world states $\mathbf{w_i}$ are multivariate, a separate regressor is used for each dimension in  $\mathbf{w}$.
 
 \section{Results}
 
@@ -84,7 +83,7 @@ For testing, \emph{n} with new fonts are used.
 
 \begin{center}
 \begin{table}[h]
-\caption[Table caption text]{Comparing the reconstrucction of several \emph{m} with different fonts and variances. In blue is the ground truth and in red is the reconstructed character.}
+\caption[Table caption text]{Comparing the reconstruction of several \emph{m} with different fonts and variances. In blue is the ground truth and in red is the reconstructed character.}
 \label{tab:results}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
@@ -108,8 +107,8 @@ Font3 &
 \end{table}
 \end{center}
 
-As the Table \ref{tab:results} shows smaller variances $\sigma^2$ produce better results.
-Therefore, we can conclude that our Prior model of a Normal distribution is a appropriate choice for this data set.
-Furthermore, as the algorithm also outputs the covariance, we could plot it and see how confidence is on predicted \emph{m}.
+As shown in Table \ref{tab:results}, smaller variances $\sigma^2$ produce better results.
+Therefore, our prior model of a Normal distribution is hardly useful for this dataset, and we are better off relying only on the data.
+The quantity of samples in the dataset is relatively small, this is even more evident if we compare it against the data dimensionality, leading to poor generalization, for instance there are not samples of the top arch in Font2 in the training data. 
 
 \end{document}
