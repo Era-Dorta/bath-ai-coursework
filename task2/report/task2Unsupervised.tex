@@ -30,8 +30,7 @@ CM50246: Machine Learning and AI}
 \section{Introduction}
  
 Unsupervised learning is a challenging task, given that the only information the clustering has is the data itself.
-The K-Means technique uses a non probabilistic approach to solve the problem.
-While the Mixture of Gaussians performs a similar task but using a Bayesian approach.
+The K-Means technique uses a non probabilistic approach to solve the problem, while the Mixture of Gaussians performs a similar task but using a Bayesian approach.
 
 \section{The problem}
 
@@ -56,11 +55,11 @@ The algorithm then performs the following actions:
 \end{enumerate}
 
 For the first step, the distance to each cluster is defined as the euclidean distance from the data point to the cluster prototype.
-This two stages are repeated until no points get reassigned in one iteration.
+These two stages are repeated until no points get reassigned in one iteration.
  
 \subsection{Mixture of Gaussians}
 
-A mixture of gaussians approach assumes the data can be modelled using a weighted sum of $K$ normal distributions, as shown in Equation \ref{eq:prGaussian}.
+A mixture of Gaussians approach assumes the data can be modelled using a weighted sum of $K$ normal distributions, as shown in Equation \ref{eq:prGaussian}.
 Where for each of the normal distributions, $\boldsymbol{\mu}_k$ is the mean, $\mathbf{\Sigma}_k$ is the covariance, $\lambda_k$ is the weight and $\boldsymbol{\theta} = \left\{ \lambda_k, \boldsymbol{\mu}_k, \mathbf{\Sigma}_k \right\}_{k=1}^K $.
 
 \begin{equation}
@@ -72,8 +71,8 @@ s.t. \qquad & \sum_{k = 1}^K \lambda_k = 1.
 \end{equation}
 
 %Why noooot????
-A close form solution is not found if we try to learn the parameters using a maximum likelihood approach.
-One alternative is to use a expectation maximization technique.
+A closed form solution is not found if we try to learn the parameters using a maximum likelihood approach.
+One alternative is to use an expectation maximization technique.
 Before we can apply it, a hidden variable $h \in \left\{ 1 \cdots K \right\} $ has to be added to the model, as shown in Equation \ref{eq:addHidden}.
 
 \begin{equation}
@@ -86,7 +85,7 @@ Pr(\mathbf{x}| \boldsymbol{\theta}) &= \sum_{k=1}^K Pr(\mathbf{x}, h = k, \bolds
 \end{equation}
 
 
-A expectation maximization consist of a initialization, followed by alternating E-steps and M-steps until a solution is found.
+An expectation maximization consist of a initialization, followed by alternating E-steps and M-steps until a solution is found.
 The initialization step is shown in Equation \ref{eq:mixInit}, where $Rand()$ is a random value and $\Sigma_{\mathbf{X}}$ is the overall covariance of the data set.
 
 \begin{align}
@@ -116,21 +115,18 @@ In the M-step the $\lambda$, $\boldsymbol\mu$ and $\mathbf{\Sigma}$ are updated,
 \end{split}
 \end{equation}
 
-An alternative to the random initialization for the means of the gaussians is to run the k-means first and then assign the cluster means to the gaussians means.
+An alternative to the random initialization for the means of the Gaussians is to run the k-means first and then assign the cluster means to the Gaussians means.
 I.e. $\mu^0_k = \mu_{mi}$, where $\mu_{mi}$ is the mean of the cluster $i$ in the k-means output. 
 
 \section{Results}
 
-K-Means performance varies greatly due to its random initialization, suffering greatly from local minima.
-That can be seen in the performance Table \ref{tab:results}.
-To obtain the data the training set \emph{MNIST\_Data} was used.
-Each cluster or gaussian was assign to the digits class by counting how many digits of each class were assigned to the current cluster taking the 
-$max \sum_{l=1}^{L} x_{l}$ 
+K-Means performance varies greatly due to its random initialization, suffering greatly from local minima, as shown in Table \ref{tab:results}.
+To obtain the data, the training set \emph{MNIST\_Data} was used.
+Each cluster or Gaussian was designated as representative of a digit, we compute how many digits of each class were assigned to the current cluster, and we take $max \sum_{l=1}^{L} x_{l}$ 
 
 Using the Gaussian mixture model with random initialization yields worse results than the k-means.
-However this is probably due to the random initialization, as they should give on average similar results.
-Nevertheless when using the kmeans initialization the hits rate increases slightly.
-Therefore we achieve a probabilistic classifier with the similar accuracy as a non probabilistic one.
+However, this is probably due to the random initialization, as they should give on average similar results.
+When using the kmeans initialization the hits rate increases slightly, so we have a probabilistic classifier with similar accuracy as a non probabilistic one.
 Lastly, the relatively low hit rates may imply that the data is not linearly separable.
 
 \begin{table}[h]
